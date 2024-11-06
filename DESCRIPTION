@@ -3,7 +3,20 @@ Title: COMPUTING THE PRICES OF TEMPERATURE DERIVATIVES
 Version: 0.0.0.9000
 Authors@R: 
     person("Zexian", "Wang", , "leowang@tamu.edu", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: This package contains functions for computing the prices of 
+  different types of temperature derivatives based on their measurement periods 
+  and underlying locations, and for calibrating the risk-neutral parameters 
+  based on the market prices. The prices of the temperature derivatives can be 
+  computed using three different methods, including the truncated Fourier 
+  series method, the adaptive bandwidth method and multivariate non-Gaussian 
+  spatio-temporal models. The temperature forecasts can also be computed using 
+  any of the three methods. Since the computations mainly revolve around 
+  temperatures data, the average daily temperatures and the deseasonalized 
+  temperatures at various measuring stations are provided, and there are also 
+  functions to perform simple diagnostic tests on the temperatures data. In 
+  addition, there are functions to compute hedge ratios and optimal portfolio 
+  weights, which can lead to effective strategies for managing the temperature 
+  risks at different locations. 
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
