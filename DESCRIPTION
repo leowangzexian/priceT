@@ -1,5 +1,5 @@
 Package: priceT
-Title: What the Package Does (One Line, Title Case)
+Title: COMPUTING THE PRICES OF TEMPERATURE DERIVATIVES
 Version: 0.0.0.9000
 Authors@R: 
     person("Zexian", "Wang", , "leowang@tamu.edu", role = c("aut", "cre"))
