@@ -28,8 +28,15 @@ diagnostics = function(resid) {
   kstest = ks.test(resid, "pnorm") # normality test
 
   qqnorm(resid)
-  qqline(resid, col = "blue") # qq plot against Gaussian
+  qqline(resid, col = "blue") # QQ plot against Gaussian
   saved_plot1 = recordPlot() # save the plot
+
+  # QQ plot against generalised hyperbolic distribution
+  # qqghyp(resid, spline.points = 100)
+  # saved_plot2 = recordPlot() # save the plot
+
+  # Kernel density estimates
+  plot(density(resid, kernel = "epanechnikov"), main = "Kernel density estimate", xlab = "deseasonalized temperatures")
 
   return(list(kstest = kstest, plt1 = saved_plot1))
 }
