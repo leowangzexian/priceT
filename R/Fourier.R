@@ -1,62 +1,91 @@
 # Function that returns the price of a temperature futures using the truncated Fourier series method
-# resid = n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years
+# resid = n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
 # station = the specific station that the price of the temperature futures depends on
 # start_ind = index of the start of the measurement period
 # end_ind = index of the end of the measurement period
 # type = type of the temperature futures, CDD, HDD or CAT
-Fourier = function(resid, station, start_ind, end_ind, type) {
-  n = length(sredis)
+Fourier = function(residuals, station, start_ind, end_ind, type) {
+  n = dim(residuals)[1]
+  p = dim(residuals)[2]
   years = n / 365 # number of years included
-  sresids_m = matrix(sresids, nrow = 365, byrow = TRUE) # rearranging
-  svar = rowMeans(sresids_m) # means for each day
+  residt = do.call(ts.union, lapply(1:p, function(i) as.ts(residuals[, i]))) # format resid as time series
+  residtar = ar(residt, aic = FALSE, order.max = 3) # fit to VAR model
+  resids = as.matrix(residtar$resid) # residuals from fitted VAR model
+  resids = matrix(as.numeric(resids), n, p)
+  resids[1, ] = resids[1 + 365, ] # fill in the NA values
+  resids[2, ] = resids[2 + 365, ] # fill in the NA values
+  resids[3, ] = resids[3 + 365, ] # fill in the NA values
 
-  # Simulate the time variable (e.g., days of the year)
-  t <- 1:365
+  for (i in 1:p) {
+    resids_m = matrix(resids[, i]^2, nrow = 365, byrow = TRUE) # rearranging
+    svar = rowMeans(resids_m) # means for each day
+    initial = c(3.5, 0.5, 0.5, -0.5, -0.2, 0.2, 0.1, -0.1, rep(0, 24)) # initialise parameter values
+    lower_bound = rep(-50, 32) # lower bounds for the 32 parameters
+    upper_bound = rep(50, 32) # upper bounds for the 32 parameters
+    bounds = list(lower = lower_bound, upper = upper_bound) # bounds on the objective values
+    optim_result = optim(
+      par = initial,
+      fn = loc1seasonal,
+      loc1seasonal_var = svar,
+      method = "L-BFGS-B",
+      lower = lower_bound,
+      upper = upper_bound
+    ) # fitting the seasonal variance function through minimisation
+    loc1paras = optim_result$par
 
-  # Fit Fourier series to the data
-  fit <- fit_fourier_series(temperature_data, t)
+    # generate matrix of cosine and sine terms for all days and frequencies
+    days = 1:365
+    freqs = 1:16
 
-  # Calculate residuals (deviation from Fourier fit)
-  residuals <- calculate_residuals(fit, temperature_data, t)
+    # create cosine and sine matrices for the truncated Fourier series
+    cos_terms = matrix(cos(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
+    sin_terms = matrix(sin(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
 
-  # Calculate seasonal variance based on residuals
-  seasonal_variance <- calculate_variance(residuals)
+    # compute the sum2 matrix (for each day, the sum over j of cos + sin terms)
+    seasonal_var = loc1paras[1] + rowSums(matrix(loc1paras[2 * freqs] * cos_terms + loc1paras[2 * freqs + 1] * sin_terms, nrow = 365))
 
-  # Depending on the type of future (CDD, HDD, CAT), calculate the price
-  if (future_type == "CDD") {
-    price <- sum(pmax(temperature_data - 65, 0) * seasonal_variance)  # CDD = Cooling Degree Days
-  } else if (future_type == "HDD") {
-    price <- sum(pmax(65 - temperature_data, 0) * seasonal_variance)  # HDD = Heating Degree Days
-  } else if (future_type == "CAT") {
-    price <- sum(temperature_data)  # CAT = temperature average or total
+    # plotting the seasonal variance and fitted seasonal variance function
+    plot(days, svar, type = "l", col = "blue", xlab = "Time", ylab = "Seasonal Variance", lwd = 2, main = "Seasonal Variance")
+    lines(seasonal_var, col = "magenta", lwd = 2.5)
+    if (p == station) {
+      saved_plot = recordPlot() # save the plot for one station
+    }
+
+    resids[, p] = resids[, p] / rep(seasonal_var, times = years) # compute standardized residuals
   }
 
-  # Return the computed futures price
+  # compute the covariance matrix of the standardized residuals
+
+  clevel = 65
+  # pricing
+  if (type == "CDD") { # Cooling Degree Days
+    # pricing method for CDD
+
+  } else if (type == "HDD") { # Heating Degree Days
+    # pricing method for HDD
+
+  } else if (type == "CAT") { # Cumulative Average Temperature
+    # pricing method for CAT
+
+  }
+
+  # returns the computed futures price
   return(price)
 }
 
-fit_fourier_series <- function(temps, t, num_terms = 3) {
-  # Fit Fourier series to the temperature data
-  formula <- as.formula(paste("temps ~ a + b * t +",
-                              paste(paste("c", 1:num_terms, "* cos(2 * pi * (t - d", 1:num_terms, ") / 365)", sep = ""), collapse = " + ")))
+# Function that computes and returns the objective function for fitting the seasonal variance function based on the truncated Fourier series
+loc1seasonal = function(params, loc1seasonal_var) {
+  # generate matrix of cosine and sine terms for all days and frequencies
+  days = 1:365
+  freqs = 1:16
 
-  fit <- nls(formula, data = data.frame(temps = temps, t = t), start = list(a = 50, b = 0, c1 = 35, d1 = 0))
-  return(fit)
-}
+  # create cosine and sine matrices for the truncated Fourier series
+  cos_terms = matrix(cos(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
+  sin_terms = matrix(sin(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
 
-# Function to calculate residuals after Fourier fit
-calculate_residuals <- function(fit, temps, t) {
-  fitted_temps <- predict(fit, newdata = data.frame(t = t))
-  residuals <- temps - fitted_temps
-  return(residuals)
-}
+  # compute the sum2 matrix (for each day, the sum over j of cos + sin terms)
+  sum2 = params[1] + rowSums(matrix(params[2 * freqs] * cos_terms + params[2 * freqs + 1] * sin_terms, nrow = 365))
 
-# Function to compute the variance based on residuals (seasonal variance)
-calculate_variance <- function(residuals) {
-  squared_residuals <- residuals^2
-  seasonal_variance <- rep(NA, length(residuals))
-  for (i in 3:length(residuals)) {
-    seasonal_variance[i] <- mean(squared_residuals[(i-2):(i+2)])  # Using a rolling window
-  }
-  return(seasonal_variance)
+  # computing and returning objective function
+  return(sum(sum2^2 - 2 * sum2 * loc1seasonal_var + loc1seasonal_var^2))
 }
