@@ -1,10 +1,15 @@
 # Function that returns the price of a temperature futures using the truncated Fourier series method
-# temp = n by p matrix containing the past temperatures data at p stations over (n / 365) years
+# resid = n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years
 # station = the specific station that the price of the temperature futures depends on
 # start_ind = index of the start of the measurement period
 # end_ind = index of the end of the measurement period
 # type = type of the temperature futures, CDD, HDD or CAT
-Fourier = function(temp, station, start_ind, end_ind, type) {
+Fourier = function(resid, station, start_ind, end_ind, type) {
+  n = length(sredis)
+  years = n / 365 # number of years included
+  sresids_m = matrix(sresids, nrow = 365, byrow = TRUE) # rearranging
+  svar = rowMeans(sresids_m) # means for each day
+
   # Simulate the time variable (e.g., days of the year)
   t <- 1:365
 
