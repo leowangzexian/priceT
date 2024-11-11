@@ -25,4 +25,7 @@ Depends:
     R (>= 2.10)
 LazyData: true
 Imports: 
+    dgof,
+    ggplot2,
+    ghyp,
     vars

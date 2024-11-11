@@ -18,13 +18,13 @@
 calib = function(theta, price, market_price) {
   # compatibility checks
   if (is.vector(theta) == FALSE) {
-    stop("temp should be a vector.") # returns error message if the input temp is not a vector
+    stop("theta should be a vector.") # returns error message if the input theta is not a vector
   }
   if (is.vector(price) == FALSE) {
-    stop("temp should be a vector.") # returns error message if the input temp is not a vector
+    stop("price should be a vector.") # returns error message if the input price is not a vector
   }
   if (is.vector(market_price) == FALSE) {
-    stop("temp should be a vector.") # returns error message if the input temp is not a vector
+    stop("market_price should be a vector.") # returns error message if the input market_price is not a vector
   }
 
   # computing price with risk-neutral parameter
