@@ -1,9 +1,25 @@
-# Function that returns the price of a temperature futures using the truncated Fourier series method
-# resid = n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
-# station = the specific station that the price of the temperature futures depends on
-# start_ind = index of the start of the measurement period
-# end_ind = index of the end of the measurement period
-# type = type of the temperature futures, CDD, HDD or CAT
+#' Pricing with truncated Fourier series
+#'
+#' @description
+#' Function that returns the price of a temperature futures using the truncated Fourier series
+#' method to estimate seasonal volatility
+#'
+#' @param residuals A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
+#' @param station An numeric index denoting the specific station that the price of the temperature futures depends on
+#' @param start_ind An numeric index for the start of the measurement period
+#' @param end_ind An numeric index for the end of the measurement period
+#' @param type A string denoting the type of the temperature futures, either CDD, HDD or CAT
+#'
+#' @return A list containing:
+#'         \item{price}{}
+#'         \item{sresids}{}
+#'         \item{plt}{}
+#'
+#' @export
+#'
+#' @examples
+#' # load the residuals data from residuals.rda in the data folder
+#' residuals = matrix(as.numeric(residuals[, 3:5]), 730, 3)
 Fourier = function(residuals, station, start_ind, end_ind, type) {
   # compatibility checks
   if (is.matrix(resid) == FALSE) {
