@@ -1,4 +1,5 @@
 #' Finding the seasonal trend in historical temperatures
+#'
 #' @description
 #' Function that returns the estimated coefficients of the seasonality function
 #'
@@ -16,6 +17,8 @@
 #'
 #' @examples
 #' # load the temp0 data from temp0.rda in the data folder
+#'
+#' # example 1
 #' temp = as.numeric(temp0[, 3]) # historical temperaures at one station
 #' seasonal1 = seasonal(temp)
 #'
@@ -24,6 +27,14 @@
 #' head(seasonal1$seasonality) # fitted values of the seasonal function
 #' seasonal1$plt # plot
 #'
+#' # example 2
+#' temp = as.numeric(temp0[, 50]) # historical temperaures at one station
+#' seasonal2 = seasonal(temp)
+#'
+#' # examine results
+#' c(seasonal2$a, seasonal2$b, seasonal2$c, seasonal2$d) # coefficients
+#' head(seasonal2$seasonality) # fitted values of the seasonal function
+#' seasonal2$plt # plot
 seasonal = function(temp) {
   # compatibility check
   if (is.vector(temp) == FALSE) {
