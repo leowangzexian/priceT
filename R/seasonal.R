@@ -1,5 +1,29 @@
-# Function that returns the estimated coefficients of the seasonality function
-# temp = n by 1 vector containing the past temperatures data at one station over (n / 365) years
+#' Finding the seasonal trend in historical temperatures
+#' @description
+#' Function that returns the estimated coefficients of the seasonality function
+#'
+#' @param temp A n by 1 vector containing the past temperatures data at one station over (n / 365) years
+#'
+#' @return A list containing:
+#'         \item{a}{a scalar that is the value of the coefficient a in the seasonal function}
+#'         \item{b}{a scalar that is the value of the coefficient b in the seasonal function}
+#'         \item{c}{a scalar that is the value of the coefficient c in the seasonal function}
+#'         \item{d}{a scalar that is the value of the coefficient d in the seasonal function}
+#'         \item{seasonality}{n by 1 vector containing the values of the seasonal function}
+#'         \item{plt}{plot of the temperatures and the seasonal function over the time indices}
+#'
+#' @export
+#'
+#' @examples
+#' # load the temp0 data from temp0.rda in the data folder
+#' temp = as.numeric(temp0[, 3]) # historical temperaures at one station
+#' seasonal1 = seasonal(temp)
+#'
+#' # examine results
+#' c(seasonal1$a, seasonal1$b, seasonal1$c, seasonal1$d) # coefficients
+#' head(seasonal1$seasonality) # fitted values of the seasonal function
+#' seasonal1$plt # plot
+#'
 seasonal = function(temp) {
   # compatibility check
   if (is.vector(temp) == FALSE) {
