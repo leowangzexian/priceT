@@ -29,6 +29,12 @@ seasonal = function(temp) {
 
   # returns the estimated coefficients of the seasonality function,
   # the fitted seasonality function and the graph plotted
+  # a = a scalar that is the value of the coefficient a in the seasonal function
+  # b = a scalar that is the value of the coefficient b in the seasonal function
+  # c = a scalar that is the value of the coefficient c in the seasonal function
+  # d = a scalar that is the value of the coefficient d in the seasonal function
+  # seasonality = n by 1 vector containing the values of the seasonal function
+  # plt = plot of the temperatures and the seasonal function over the time indices
   return(list(a = loc1a, b = loc1b, c = loc1c, d = loc1d, seasonality = loc1fitted, plt = saved_plot))
 }
 
