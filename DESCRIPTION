@@ -28,4 +28,9 @@ Imports:
     dgof,
     ggplot2,
     ghyp,
+    Rcpp,
+    stats,
     vars
+LinkingTo: 
+    Rcpp,
+    RcppArmadillo
