@@ -16,6 +16,7 @@ The main purpose of the package is to compute the price of a temperature futures
 7. temp_forecast: forecasting the temperatures in the future after fitting the historical data to the spatio-temporal models, both point forecasts and confidence intervals will be considered, graphs will be plotted and returned. 
 8. temp_hedge: computes the hedge ratio, which is the number of contracts needed in order to create a perfect hedge for the temperature risk at a particular station over a specified measurement period. 
 9. loc_hedge: creates an optimal portfolio for hedging the temperature risk at a new location using the contracts traded based on other locations and returns the optimal weights. 
+
 In addition, datasets for the past temperatures and deseasonalized temperatures at different stations are provided. 
 
 **Installation instructions:**
