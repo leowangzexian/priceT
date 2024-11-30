@@ -87,13 +87,13 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
   # pricing
   if (type == "CDD") { # Cooling Degree Days
     # pricing method for CDD
-
+    mean(max(x - clevel, 0))
   } else if (type == "HDD") { # Heating Degree Days
     # pricing method for HDD
-
+    mean(max(clevel - x, 0))
   } else if (type == "CAT") { # Cumulative Average Temperature
     # pricing method for CAT
-
+    sum(x)
   }
 
   # returns the computed futures price, standardized residuals and the graph plotted
