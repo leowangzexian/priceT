@@ -33,6 +33,9 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
   if (p < 3) {
     stop("Need at least three stations.") # returns error message if the number of stations < 3
   }
+  if (is.integer(station) == FALSE | station <= 0 | station > p) {
+    stop("station should be a positive integer.") # returns error message if the index is not within the possible range
+  }
 
   years = n / 365 # number of years included
   residt = do.call(ts.union, lapply(1:p, function(i) as.ts(residuals[, i]))) # format resid as time series
@@ -44,7 +47,7 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
   resids[3, ] = resids[3 + 365, ] # fill in the NA values
 
   for (i in 1:p) {
-    resids_m = matrix(resids[, i]^2, nrow = 365, byrow = TRUE) # rearranging
+    resids_m = matrix(resids[, i]^2, nrow = 365) # rearranging
     svar = rowMeans(resids_m) # means for each day
     initial = c(3.5, 0.5, 0.5, -0.5, -0.2, 0.2, 0.1, -0.1, rep(0, 25)) # initialise parameter values
     lower_bound = rep(-50, 33) # lower bounds for the 33 parameters
@@ -65,20 +68,22 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
     freqs = 1:16
 
     # create cosine and sine matrices for the truncated Fourier series
-    cos_terms = matrix(cos(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
-    sin_terms = matrix(sin(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
+    cos_matrix = outer(days, 1:length(freqs), FUN = function(i, j) cos(2 * j * pi * i / length(days)))
+    sin_matrix = outer(days, 1:length(freqs), FUN = function(i, j) sin(2 * j * pi * i / length(days)))
 
     # compute the sum2 matrix (for each day, the sum over j of cos + sin terms)
-    seasonal_var = loc1paras[1] + rowSums(matrix(loc1paras[2 * freqs] * cos_terms + loc1paras[2 * freqs + 1] * sin_terms, nrow = 365))
+    cos_coeffs = loc1paras[seq(2, 2 * length(freqs), by = 2)]  # Coefficients for cos
+    sin_coeffs = loc1paras[seq(3, 2 * length(freqs) + 1, by = 2)]  # Coefficients for sin
+    seasonal_var = loc1paras[1] + rowSums(cos_matrix * cos_coeffs + sin_matrix * sin_coeffs)
 
     # plotting the seasonal variance and fitted seasonal variance function
     plot(days, svar, type = "l", col = "blue", xlab = "Time", ylab = "Seasonal Variance", lwd = 2, main = "Seasonal Variance")
     lines(seasonal_var, col = "magenta", lwd = 2.5)
-    if (p == station) {
+    if (i == station) {
       saved_plot = recordPlot() # save the plot for one station
     }
 
-    resids[, p] = resids[, p] / rep(seasonal_var, times = years) # compute standardized residuals
+    resids[, i] = resids[, i] / rep(seasonal_var, times = years) # compute standardized residuals
   }
 
   # compute the covariance matrix of the standardized residuals
