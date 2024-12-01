@@ -75,6 +75,7 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
     cos_coeffs = loc1paras[seq(2, 2 * length(freqs), by = 2)]  # Coefficients for cos
     sin_coeffs = loc1paras[seq(3, 2 * length(freqs) + 1, by = 2)]  # Coefficients for sin
     seasonal_var = loc1paras[1] + rowSums(cos_matrix * cos_coeffs + sin_matrix * sin_coeffs)
+    seasonal_var = pmax(seasonal_var, 0.001)
 
     # plotting the seasonal variance and fitted seasonal variance function
     plot(days, svar, type = "l", col = "blue", xlab = "Time", ylab = "Seasonal Variance", lwd = 2, main = "Seasonal Variance")
@@ -87,6 +88,7 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
   }
 
   # compute the covariance matrix of the standardized residuals
+  covar = cov(resids)
 
   clevel = 65
   # pricing
@@ -129,4 +131,13 @@ loc1seasonal = function(params, loc1seasonal_var) {
 
   # Return the sum of squared residuals (least squares method)
   return(sum(residuals^2))
+}
+
+# Function that computes and returns the covariance matrix of the standardized residuals for each day
+sigma = function(sresids, t) {
+  if (t == 1 | t == 2 | t == 3) {
+    t = t + 3 # adjusting indices
+  }
+  sampled = sresids[seq(t, t + 365, by = 365), ] # select samples
+  return(cov(sampled)) # output covariance matrix
 }
