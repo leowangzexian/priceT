@@ -22,8 +22,8 @@
 #' residuals = matrix(as.numeric(residuals[, 3:5]), 730, 3)
 Fourier = function(residuals, station, start_ind, end_ind, type) {
   # compatibility checks
-  if (is.matrix(resid) == FALSE) {
-    stop("resid should be a vector.") # returns error message if the input resid is not a matrix
+  if (is.matrix(residuals) == FALSE) {
+    stop("residuals should be a matrix.") # returns error message if the input resid is not a matrix
   }
   n = dim(residuals)[1]
   p = dim(residuals)[2]
@@ -31,7 +31,7 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
     stop("Need at least two years of data for resid.") # returns error message if the data inputted is less than 2 years
   }
   if (p < 3) {
-    sto("Need at least three stations.") # returns error message if the number of stations < 3
+    stop("Need at least three stations.") # returns error message if the number of stations < 3
   }
 
   years = n / 365 # number of years included
@@ -46,9 +46,9 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
   for (i in 1:p) {
     resids_m = matrix(resids[, i]^2, nrow = 365, byrow = TRUE) # rearranging
     svar = rowMeans(resids_m) # means for each day
-    initial = c(3.5, 0.5, 0.5, -0.5, -0.2, 0.2, 0.1, -0.1, rep(0, 24)) # initialise parameter values
-    lower_bound = rep(-50, 32) # lower bounds for the 32 parameters
-    upper_bound = rep(50, 32) # upper bounds for the 32 parameters
+    initial = c(3.5, 0.5, 0.5, -0.5, -0.2, 0.2, 0.1, -0.1, rep(0, 25)) # initialise parameter values
+    lower_bound = rep(-50, 33) # lower bounds for the 33 parameters
+    upper_bound = rep(50, 33) # upper bounds for the 33 parameters
     bounds = list(lower = lower_bound, upper = upper_bound) # bounds on the objective values
     optim_result = optim(
       par = initial,
@@ -102,17 +102,26 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
 
 # Function that computes and returns the objective function for fitting the seasonal variance function based on the truncated Fourier series
 loc1seasonal = function(params, loc1seasonal_var) {
-  # generate matrix of cosine and sine terms for all days and frequencies
-  days = 1:365
-  freqs = 1:16
+  n_days = 365
+  n_harmonics = 16
 
-  # create cosine and sine matrices for the truncated Fourier series
-  cos_terms = matrix(cos(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
-  sin_terms = matrix(sin(2 * pi * outer(days, freqs, FUN = "*") / 365), nrow = 365, ncol = 16)
+  # Create a matrix of days (1 to 365)
+  time_indices = 1:n_days
 
-  # compute the sum2 matrix (for each day, the sum over j of cos + sin terms)
-  sum2 = params[1] + rowSums(matrix(params[2 * freqs] * cos_terms + params[2 * freqs + 1] * sin_terms, nrow = 365))
+  # Create cosine and sine matrices for all harmonics and all days
+  cos_matrix = outer(time_indices, 1:n_harmonics, FUN = function(i, j) cos(2 * j * pi * i / n_days))
+  sin_matrix = outer(time_indices, 1:n_harmonics, FUN = function(i, j) sin(2 * j * pi * i / n_days))
 
-  # computing and returning objective function
-  return(sum(sum2^2 - 2 * sum2 * loc1seasonal_var + loc1seasonal_var^2))
+  # Extract cosine and sine coefficients from the parameters
+  cos_coeffs = params[seq(2, 2 * n_harmonics, by = 2)]  # Coefficients for cos
+  sin_coeffs = params[seq(3, 2 * n_harmonics + 1, by = 2)]  # Coefficients for sin
+
+  # Compute the sum2 matrix for all days and harmonics
+  sum2_matrix = params[1] + rowSums(cos_matrix * cos_coeffs + sin_matrix * sin_coeffs)
+
+  # Compute residuals (difference between predicted and actual seasonal variance)
+  residuals = sum2_matrix - loc1seasonal_var
+
+  # Return the sum of squared residuals (least squares method)
+  return(sum(residuals^2))
 }
