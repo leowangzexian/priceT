@@ -87,9 +87,6 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
     resids[, i] = resids[, i] / rep(seasonal_var, times = years) # compute standardized residuals
   }
 
-  # compute the covariance matrix of the standardized residuals
-  covar = cov(resids)
-
   clevel = 65
   # pricing
   if (type == "CDD") { # Cooling Degree Days
