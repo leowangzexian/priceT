@@ -9,7 +9,7 @@
 #' @param station A numeric index denoting the specific station to be considered
 #'
 #' @return A list containing:
-#'         \item{vol}{A 1 by 334 containing the volatilities of CAT futures prices on each day in the next year}
+#'         \item{vol}{A 1 by 334 vector containing the volatilities of CAT futures prices on each day in the next year}
 #'
 #' @export
 #'
@@ -185,7 +185,7 @@ temp_hedge = function(residuals, station) {
   vol = zoo::na.approx(vol, rule = 2) # interpolated values with outliers removed
 
   # returns the CAT volatilities over a year from Jan to Nov
-  # vol = A 1 by 334 containing the volatilities of CAT futures prices on each day in the next year
+  # vol = A 1 by 334 vector containing the volatilities of CAT futures prices on each day in the next year
   # the daily CAT volatility is equivalent to the hedge ratio,
   # which is the number of contracts needed in order to create a perfect hedge for the temperature risk at that particular station
   return(list(vol = vol))
