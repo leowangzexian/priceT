@@ -1,3 +1,36 @@
+#' Hedging temperature risk
+#'
+#' @description
+#' Function that computes and returns the volatilities of the CAT futures prices over the next year from Jan to Nov,
+#' where the CAT volatility is equivalent to the hedge ratio, the number of contracts needed in order to create a perfect hedge
+#' for the temperature risk at that particular station over the specified measurement period of the monthly CAT
+#'
+#' @param residuals A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
+#' @param station A numeric index denoting the specific station to be considered
+#'
+#' @return A list containing:
+#'         \item{vol}{A 1 by 334 containing the volatilities of CAT futures prices on each day in the next year}
+#'
+#' @export
+#'
+#' @examples
+#' # load the residuals data from residuals.rda in the data folder
+#'
+#' # example 1
+#' residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+#' station1 = 1
+#' temp_hedge1 = temp_hedge(residuals1, station1)
+#'
+#' # examine results
+#' temp_hedge1$vol # volatilities of CAT futures prices
+#'
+#' # example 2
+#' residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+#' station2 = 3
+#' temp_hedge2 = temp_hedge(residuals2, station2)
+#'
+#' # examine results
+#' temp_hedge2$vol # volatilities of CAT futures prices
 temp_hedge = function(residuals, station) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
