@@ -1,3 +1,35 @@
+#' Hedging spatial risk with optimal portfolio
+#'
+#' @description
+#' Function that computes and returns the optimal weights for hedging the
+#' temperature risk at a particular location using the contracts traded based on other locations
+#'
+#' @param residuals A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
+#' @param station A numeric index denoting the specific station to be hedged
+#'
+#' @return A list containing:
+#'         \item{optim_weights}{A 1 by (p - 1) vector containing the optimal weights for each station in the portfolio}
+#'
+#' @export
+#'
+#' @examples
+#' # load the residuals data from residuals.rda in the data folder
+#'
+#' # example 1
+#' residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+#' station1 = 1
+#' loc_hedge1 = loc_hedge(residuals1, station1)
+#'
+#' # examine results
+#' loc_hedge1$optim_weights # weights for each of the other stations in the optimal portfolio
+#'
+#' # example 2
+#' residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+#' station2 = 3
+#' loc_hedge2 = loc_hedge(residuals2, station2)
+#'
+#' # examine results
+#' loc_hedge2$optim_weights # weights for each of the other stations in the optimal portfolio
 loc_hedge = function(residuals, station) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
@@ -78,11 +110,9 @@ loc_hedge = function(residuals, station) {
   optim_weights = optim_r$par
   optim_weights = optim_weights / sum(optim_weights) # normalising weights
 
-  # returns the CAT volatilities over a year from Jan to Nov
-  # vol = A 1 by 334 containing the volatilities of CAT futures prices on each day in the next year
-  # the daily CAT volatility is equivalent to the hedge ratio,
-  # which is the number of contracts needed in order to create a perfect hedge for the temperature risk at that particular station
-  return(list(vol = vol))
+  # returns the optimal weights for each station
+  # optim_weights = A 1 by (p - 1) vector containing the optimal weights for each station
+  return(list(optim_weights = optim_weights))
 }
 
 # Function that computes and returns the objective function for fitting the seasonal variance function
