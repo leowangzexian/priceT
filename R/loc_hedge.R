@@ -66,22 +66,17 @@ loc_hedge = function(residuals, station) {
     resids[, i] = resids[, i] / rep(seasonal_var, times = years) # compute standardized residuals
   }
 
-  init = rep(1 / p, p) # initialise with equal weights
+  init = rep(1 / (p - 1), p - 1) # initialise with equal weights
   target = resids[, station] # payoff to be replicated
   hedge = resids[, - station]
-  lower_bound = rep(0, p - 1) # lower bounds for the (p - 1) parameters
-  upper_bound = rep(1, p - 1) # upper bounds for the (p - 1) parameters
-  bounds = list(lower = lower_bound, upper = upper_bound) # bounds on the objective values
   optim_r = optim(
     par = init,
     fn = obj_s,
     hedge = hedge,
-    target = target,
-    method = "L-BFGS-B",
-    lower = lower_bound,
-    upper = upper_bound
+    target = target
   ) # unconstrained optimisation
-  loc1paras = optim_result$par
+  optim_weights = optim_r$par
+  optim_weights = optim_weights / sum(optim_weights) # normalising weights
 
   # returns the CAT volatilities over a year from Jan to Nov
   # vol = A 1 by 334 containing the volatilities of CAT futures prices on each day in the next year
