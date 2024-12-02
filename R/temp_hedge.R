@@ -71,85 +71,91 @@ temp_hedge = function(residuals, station) {
   sigma1 = fittedNIG@sigma / 10^4 # covariance of the multivariate distribution
 
   vol = c() # initialise vector to store the volatilities of the CAT futures prices
-
+  damp = 0.1
   # Jan
   tau1 = 32
   tau2 = 59
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(1:31, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(1:31, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Feb
   tau1 = 60
   tau2 = 90
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(32:59, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(32:59, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Mar
   tau1 = 91
   tau2 = 120
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(60:90, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(60:90, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Apr
   tau1 = 121
   tau2 = 151
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(91:120, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(91:120, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # May
   tau1 = 152
   tau2 = 181
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(121:151, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(121:151, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Jun
   tau1 = 182
   tau2 = 212
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(152:181, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(152:181, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Jul
   tau1 = 213
   tau2 = 243
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(182:212, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(182:212, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Aug
   tau1 = 244
   tau2 = 273
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(213:243, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(213:243, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Sep
   tau1 = 274
   tau2 = 304
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(244:273, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(244:273, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Oct
   tau1 = 305
   tau2 = 334
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(274:304, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(274:304, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
 
   # Nov
   tau1 = 335
   tau2 = 365
   # compute the volatilities of the CAT futures prices over this month
-  re = (tau2 - tau1) + sapply(305:334, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))
+  re = ((tau2 - tau1) + sapply(305:334, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1))) * damp
   vol = c(vol, apply(re, 2, function(x) x[station])) # append to existing list
   vol[vol <= 0 | vol > 100] = NA # controls the minimum and maximum of the CAT volatilities
   vol = zoo::na.approx(vol, rule = 2) # interpolated values with outliers removed
+
+  # returns the CAT volatilities over a year from Jan to Nov
+  # vol = A 1 by 334 containing the volatilities of CAT futures prices on each day in the next year
+  # the daily CAT volatility is equivalent to the hedge ratio,
+  # which is the number of contracts needed in order to create a perfect hedge for the temperature risk at that particular station
+  return(list(vol = vol))
 }
 
 # Function that computes and returns the objective function for fitting the seasonal variance function
