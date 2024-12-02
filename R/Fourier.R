@@ -123,16 +123,35 @@ Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
     acc = 0
     for (i in start_ind:end_ind) {
       seas = loc1a + loc1b * (t1 + i) + loc1c * cos(2 * pi * ((t1 + i) - loc1d) / 365)
-      re = expm::expm(A * (i - t)) %*% sigma(resids, i)
-      re1 = expm::expm(A * (i - t)) %*% residuals[n, ]
+      re = expm(A) %*% sigma(resids, i)
+      re1 = expm(A) %*% residuals[n, ]
       acc = acc + seas + re[station, station] + re1[station] - clevel
     }
+
+
+
+    i_seq = (t1 + start_ind):(t1 + end_ind)
+    i_seq2 = start_ind:end_ind
+    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365)
+    re = sapply(i_seq2, function(i) expm(A * (i - t)) %*% sigma(resids, i))
+    re1 = sapply(i_seq2, function(i) expm(A * (i - t)) %*% residuals[n, ])
+    acc = sum(max(seas + apply(re, 2, function(x) x[station]) + re1[station] - clevel), 0)
   } else if (type == "HDD") { # Heating Degree Days
     # pricing method for HDD
-    mean(max(clevel - x, 0))
+    i_seq = (t1 + start_ind):(t1 + end_ind)
+    i_seq2 = start_ind:end_ind
+    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365)
+    re = sapply(i_seq2, function(i) expm(A) %*% sigma(resids, i))
+    re1 = expm(A) %*% residuals[n, ]
+    acc = sum(max(clevel - seas - apply(re, 2, function(x) x[station]) - re1[station]), 0)
   } else if (type == "CAT") { # Cumulative Average Temperature
     # pricing method for CAT
-    sum(x)
+    i_seq = (t1 + start_ind):(t1 + end_ind)
+    i_seq2 = start_ind:end_ind
+    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365)
+    re = sapply(i_seq2, function(i) expm(A) %*% sigma(resids, i))
+    re1 = expm(A) %*% residuals[n, ]
+    acc = sum(seas + apply(re, 2, function(x) x[station]) + re1[station])
   }
 
   # returns the computed futures price, standardized residuals and the graph plotted

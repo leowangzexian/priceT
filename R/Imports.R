@@ -6,7 +6,7 @@
 #' @import expm
 #' @importFrom vars ar
 #' @importFrom dgof ks.test
-#' @importFrom Rcpp evalCpp
 #' @importFrom expm expm
+#' @importFrom Rcpp evalCpp
 #' @useDynLib priceT, .registration = TRUE
 NULL
