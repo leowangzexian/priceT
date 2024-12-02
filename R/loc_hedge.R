@@ -22,6 +22,7 @@
 #'
 #' # examine results
 #' loc_hedge1$optim_weights # weights for each of the other stations in the optimal portfolio
+#' sum(loc_hedge1$optim_weights) # sum to one
 #'
 #' # example 2
 #' residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
@@ -30,6 +31,7 @@
 #'
 #' # examine results
 #' loc_hedge2$optim_weights # weights for each of the other stations in the optimal portfolio
+#' sum(loc_hedge2$optim_weights) # sum to one
 loc_hedge = function(residuals, station) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
