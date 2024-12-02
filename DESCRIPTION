@@ -26,6 +26,7 @@ Depends:
 LazyData: true
 Imports: 
     dgof,
+    expm,
     ggplot2,
     ghyp,
     Rcpp,

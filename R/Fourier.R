@@ -20,7 +20,8 @@
 #' @examples
 #' # load the residuals data from residuals.rda in the data folder
 #' residuals = matrix(as.numeric(residuals[, 3:5]), 730, 3)
-Fourier = function(residuals, station, start_ind, end_ind, type) {
+#' seasonal_coefs = as.numeric(seasonal_coefs[1, 2:5])
+Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
     stop("residuals should be a matrix.") # returns error message if the input resid is not a matrix
@@ -35,6 +36,18 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
   }
   if (is.integer(station) == FALSE | station <= 0 | station > p) {
     stop("station should be a positive integer.") # returns error message if the index is not within the possible range
+  }
+  if (is.integer(start_ind == FALSE) | start_ind <= 0 | start_ind > 365) {
+    stop("start_ind should be an integer between 1 and 365.") # returns error message if the starting date is not between 1 and 365
+  }
+  if (is.integer(end_ind == FALSE) | end_ind <= 0 | end_ind > 365) {
+    stop("end_ind should be an integer between 1 and 365.") # returns error message if the ending date is not between 1 and 365
+  }
+  if (start_ind >= end_ind) {
+    stop("start_ind should be smaller than end_ind") # returns error message if the starting date is not smaller than the ending date
+  }
+  if (!(length(seasonal_coefs) == 4)) {
+    stop("seasonal_coefs should be an array of length 4.") # returns error message if seasonal_coefs is not an array with length 4
   }
 
   years = n / 365 # number of years included
@@ -95,11 +108,24 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
     resids[, i] = resids[, i] / rep(seasonal_var, times = years) # compute standardized residuals
   }
 
+  # initialising parameters for derivatives pricing
+  t = 0
+  t1 = 24455
+  loc1a = seasonal_coefs[1]
+  loc1b = seasonal_coefs[2]
+  loc1c = seasonal_coefs[3]
+  loc1d = seasonal_coefs[4]
+
   clevel = 65
   # pricing
   if (type == "CDD") { # Cooling Degree Days
     # pricing method for CDD
-    mean(max(x - clevel, 0))
+    acc = 0
+    for (i in start_ind:end_ind) {
+      seas = loc1a + loc1b * i + loc1c * cos(2 * pi * (i - loc1d) / 365)
+      re = expm(A * (i - t)) * sigma(resids, i)
+      acc = acc + seas + re[station, station] - clevel
+    }
   } else if (type == "HDD") { # Heating Degree Days
     # pricing method for HDD
     mean(max(clevel - x, 0))
