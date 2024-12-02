@@ -20,20 +20,21 @@
 #'
 #' @examples
 #' # load the residuals data from residuals.rda in the data folder
+#' # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
 #'
 #' # example 1
-#' residuals = matrix(as.numeric(residuals[, 3:5]), 730, 3)
-#' seasonal_coefs = as.numeric(seasonal_coefs[1, 2:5])
+#' residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+#' seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
 #' station11 = 1
 #' start_ind11 = 1
 #' end_ind11 = 31
 #' type11 = "HDD"
-#' Fourier11 = Fourier(residuals, station11, start_ind11, end_ind11, type11, seasonal_coefs)
+#' Fourier11 = Fourier(residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1)
 #' station12 = 1
 #' start_ind12 = 182
 #' end_ind12 = 212
 #' type12 = "CDD"
-#' Fourier12 = Fourier(residuals, station12, start_ind12, end_ind12, type12, seasonal_coefs)
+#' Fourier12 = Fourier(residuals1, station12, start_ind12, end_ind12, type12, seasonal_coefs1)
 #'
 #' # examine results
 #' Fourier11$price # HDD price
@@ -44,18 +45,18 @@
 #' Fourier12$plt # plot
 #'
 #' # example 2
-#' residuals = matrix(as.numeric(residuals[, 53:57]), 730, 3)
-#' seasonal_coefs = as.numeric(seasonal_coefs[51, 2:5])
+#' residuals2 = matrix(as.numeric(residuals[, 53:57]), 730, 5)
+#' seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
 #' station21 = 1
 #' start_ind21 = 1
 #' end_ind21 = 31
 #' type21 = "HDD"
-#' Fourier21 = Fourier(residuals, station21, start_ind21, end_ind21, type21, seasonal_coefs)
+#' Fourier21 = Fourier(residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2)
 #' station22 = 1
 #' start_ind22 = 182
 #' end_ind22 = 212
 #' type22 = "CDD"
-#' Fourier22 = Fourier(residuals, station22, start_ind22, end_ind22, type22, seasonal_coefs)
+#' Fourier22 = Fourier(residuals2, station22, start_ind22, end_ind22, type22, seasonal_coefs2)
 #'
 #' # examine results
 #' Fourier21$price # HDD price
