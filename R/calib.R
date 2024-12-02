@@ -47,15 +47,34 @@ calib = function(market_price, residuals, station, start_ind, end_ind, type, sea
   if (!(type == "CDD" | type == "HDD" | type == "CAT")) {
     stop("type should be either CDD, HDD or CAT.") # returns error message if the type of the derivative is not one of the three considered
   }
-
+  # calibration
+  optim_result = optim(
+    par = 1,
+    fn = obj,
+    market_price = market_price,
+    residuals = residuals,
+    station = station,
+    start_ind = start_ind,
+    end_ind = end_ind,
+    type = type,
+    seasonal_coefs = seasonal_coefs,
+    func = func,
+    method = "Brent",
+    lower = -20,
+    upper = 20
+  ) # performs univariate minimization to find the risk-neutral parameter that brings the computed price closest to the actual market price
+  theta = optim_result$par # calibrated parameter
+  price_t = theta * func(residuals, station, start_ind, end_ind, type, seasonal_coefs)$price # calibrated price based on the risk-neutral parameter theta
+  error = 100 * abs(price_t^2 - 2 * price_t * market_price + market_price^2) / market_price # percentage deviation from the true price
 
   # returns the calibrated risk-neutral parameter and the in-sample pricing error
-  # theta = a scalar that is the calibrated risk-neutral parameter
-  # error = a scalar that is the in-sample pricing error
+  # theta = a scalar that is the calibrated risk-neutral parameter (can be negative or positive)
+  # error = a scalar that is the in-sample pricing error in percentages
   return(list(theta = theta, error = error))
 }
 
 # the objective function for minimisation
-obj = function(theta, market_price) {
-  return(theta^2 - 2 * theta * market_price - market_price^2)
+obj = function(theta, market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func) {
+  price_t = theta * func(residuals, station, start_ind, end_ind, type, seasonal_coefs)$price
+  return(price_t^2 - 2 * price_t * market_price + market_price^2) # squared difference
 }
