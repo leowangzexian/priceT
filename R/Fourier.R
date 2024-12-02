@@ -45,22 +45,22 @@
 #' Fourier12$plt # plot
 #'
 #' # example 2
-#' residuals2 = matrix(as.numeric(residuals[, 53:57]), 730, 5)
-#' seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
-#' station21 = 1
+#' residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+#' seasonal_coefs2 = as.numeric(seasonal_coefs[49, 2:5])
+#' station21 = 3
 #' start_ind21 = 1
 #' end_ind21 = 31
 #' type21 = "HDD"
 #' Fourier21 = Fourier(residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2)
-#' station22 = 1
+#' station22 = 3
 #' start_ind22 = 182
 #' end_ind22 = 212
-#' type22 = "CDD"
+#' type22 = "CAT"
 #' Fourier22 = Fourier(residuals2, station22, start_ind22, end_ind22, type22, seasonal_coefs2)
 #'
 #' # examine results
 #' Fourier21$price # HDD price
-#' Fourier22$price # CDD price
+#' Fourier22$price # CAT price
 #' head(Fourier21$sresids) # standardised residuals
 #' head(Fourier22$sresids) # standardised residuals
 #' Fourier21$plt # plot
