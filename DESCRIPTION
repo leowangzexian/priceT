@@ -31,7 +31,8 @@ Imports:
     ghyp,
     Rcpp,
     stats,
-    vars
+    vars,
+    zoo
 LinkingTo: 
     Rcpp,
     RcppArmadillo
