@@ -8,12 +8,11 @@
 #' @param resid A n by 1 vector containing the past deseasonalized temperatures data at one station over (n / 365) years
 #'
 #' @return A list containing:
-#'         \item{}{}
-#'         \item{}{}
-#'         \item{}{}
-#'         \item{}{}
-#'         \item{}{}
-#'         \item{}{}
+#'         \item{teststat}{a scalar that is the test statistic from the Kolmogorov-Smirnov normality test}
+#'         \item{pvalue}{a scalar that is the p-value from the Kolmogorov-Smirnov normality test}
+#'         \item{plt1}{QQ plot against normal distribution}
+#'         \item{plt2}{QQ plot against generalised hyperbolic distribution}
+#'         \item{plt3}{a plot for the kernel density estimate}
 #'
 #' @export
 #'
@@ -22,6 +21,25 @@
 #'
 #' # example 1
 #' resid = as.numeric(residuals[, 3]) # deseasonalized temperaures at one station
+#' diag1 = diagnostics(resid)
+#'
+#' # examine results
+#' diag1$teststat # test statistic from the Kolmogorov-Smirnov normality test
+#' diag1$pvalue # p-value from the Kolmogorov-Smirnov normality test (smaller p-value, especially close to 0, indicates rejection of the normality assumption)
+#' diag1$plt1 # QQ plot against normal
+#' diag1$plt2 # QQ plot against generalised hyperbolic
+#' diag1$plt3 # kernel density estimate
+#'
+#' # example 2
+#' resid = as.numeric(residuals[, 53]) # deseasonalized temperaures at one station
+#' diag2 = diagnostics(resid)
+#'
+#' # examine results
+#' diag2$teststat # test statistic from the Kolmogorov-Smirnov normality test
+#' diag2$pvalue # p-value from the Kolmogorov-Smirnov normality test (smaller p-value, especially close to 0, indicates rejection of the normality assumption)
+#' diag2$plt1 # QQ plot against normal
+#' diag2$plt2 # QQ plot against generalised hyperbolic
+#' diag2$plt3 # kernel density estimate
 diagnostics = function(resid) {
   # compatibility check
   if (is.vector(resid) == FALSE) {
@@ -29,7 +47,7 @@ diagnostics = function(resid) {
   }
 
   kstest = ks.test(resid, "pnorm") # normality test
-  teststat = kstest$statistic # test statistic from Kolmogorov-Smirnov test
+  teststat = unname(kstest$statistic) # test statistic from Kolmogorov-Smirnov test
   pvalue = kstest$p.value # p-value from Kolmogorov-Smirnov test
   qqnorm(resid)
   qqline(resid, col = "blue") # QQ plot against Gaussian
@@ -52,8 +70,8 @@ diagnostics = function(resid) {
   # returns the test statistic and p-value from the Kolmogorov-Smirnov normality test,
   # QQ plot against normal distribution, QQ plot against generalised hyperbolic distribution
   # and the kernel density estimate of the deseasonalized temperatures at one particular site
-  # teststat = test statistic from the Kolmogorov-Smirnov normality test
-  # pvalue = p-value from the Kolmogorov-Smirnov normality test (smaller p-value, especially close to 0, indicates rejection of the normality assumption)
+  # teststat = a scalar that is the test statistic from the Kolmogorov-Smirnov normality test
+  # pvalue = a scalar that is the p-value from the Kolmogorov-Smirnov normality test (smaller p-value, especially close to 0, indicates rejection of the normality assumption)
   # plt1 = QQ plot against normal distribution
   # plt2 = QQ plot against generalised hyperbolic distribution
   # plt3 = kernel density estimate (compared against Gaussian)
