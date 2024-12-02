@@ -97,11 +97,14 @@ temp_forecast = function(residuals, station, seasonal_coefs, temp) {
   re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1)) # 2nd term in pricing formula
   re1 = expm::expm(A) %*% sigma1 %*% residuals[n, ] * damp # 3rd term in pricing formula
   re_vec = apply(re, 2, function(x) x[station])
-  new_temps = pmax(seas + re_vec + re1[station], 100) # new temperatures simulated
-  new_temps = pmin(new_temps, -10) # controls the minimum and maximum of the simulated temperatures
+  new_temps = seas + re_vec + re1[station] + qnorm(sig) * ghyp::rghyp(length(i_seq2)) # new temperatures simulated
+  new_temps[new_temps < -10 | new_temps > 100] = NA # controls the minimum and maximum of the simulated temperatures
+  new_temps = zoo::na.approx(new_temps, rule = 3) # interpolated values with outliers removed
   lower_conf = new_temps - qnorm(sig) * re_vec # left endpoints of confidence intervals
   upper_conf = new_temps + qnorm(sig) * re_vec # right endpoints of confidence intervals
-
+  lower_conf[lower_conf < -10 | lower_conf > 100] = NA; lower_conf = zoo::na.approx(lower_conf, rule = 3)
+  upper_conf[upper_conf < -10 | upper_conf > 100] = NA; upper_conf = zoo::na.approx(upper_conf, rule = 3)
+  full_temps = c(temp, new_temps) # appending the new temperatures in the future to the list of past temperatures
 
   # returns the computed futures price and parameter mu
   # price = a scalar that is the price of the derivative computed
