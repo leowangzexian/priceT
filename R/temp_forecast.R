@@ -78,6 +78,7 @@ temp_forecast = function(residuals, station, seasonal_coefs) {
   t = 0
   t1 = 24455
   damp = 0.01
+  sig = 0.9999
   loc1a = seasonal_coefs[1]
   loc1b = seasonal_coefs[2]
   loc1c = seasonal_coefs[3]
@@ -89,11 +90,15 @@ temp_forecast = function(residuals, station, seasonal_coefs) {
   # based on the continuous-time modelling and non-Gaussian spatio-temporal random fields
   i_seq = (t1 + start_ind):(t1 + end_ind)
   i_seq2 = start_ind:end_ind
-    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
-    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1)) # 2nd term in pricing formula
-    re1 = expm::expm(A) %*% sigma1 %*% residuals[n, ] * damp # 3rd term in pricing formula
-    acc = sum(seas + apply(re, 2, function(x) x[station]) + re1[station]) # payoff
-  }
+  seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
+  re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma1 %*% sigma_s(resids, i), 1)) # 2nd term in pricing formula
+  re1 = expm::expm(A) %*% sigma1 %*% residuals[n, ] * damp # 3rd term in pricing formula
+  re_vec = apply(re, 2, function(x) x[station])
+  new_temps = pmax(seas + re_vec + re1[station], 100) # new temperatures simulated
+  new_temps = pmin(new_temps, -10) # controls the minimum and maximum of the simulated temperatures
+  lower_conf = new_temps - qnorm(sig) * re_vec # left endpoints of confidence intervals
+  upper_conf = new_temps + qnorm(sig) * re_vec # right endpoints of confidence intervals
+
 
   # returns the computed futures price and parameter mu
   # price = a scalar that is the price of the derivative computed
