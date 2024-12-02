@@ -199,7 +199,7 @@ adaptBW = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
   return(list(price = acc, sresids = resids, plt = saved_plot))
 }
 
-# Function that computes and returns the objective function for fitting the seasonal variance function based on the truncated Fourier series
+# Function that computes and returns the objective function for fitting the seasonal variance function
 loc1seasonal_a = function(params, loc1seasonal_var) {
   n_days = 365
   n_harmonics = 32
