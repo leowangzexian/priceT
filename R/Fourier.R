@@ -9,18 +9,61 @@
 #' @param start_ind An numeric index for the start of the measurement period
 #' @param end_ind An numeric index for the end of the measurement period
 #' @param type A string denoting the type of the temperature futures, either CDD, HDD or CAT
+#' @param seasonal_coefs A 1 by 4 vector contaning the coefficients of the seasonality function at the station to be priced
 #'
 #' @return A list containing:
-#'         \item{price}{}
-#'         \item{sresids}{}
-#'         \item{plt}{}
+#'         \item{price}{a scalar that is the price of the derivative computed}
+#'         \item{sresids}{n by p matrix containing the standardized residuals computed}
+#'         \item{plt}{plot of the empirical and fitted seasonal variances at the station priced}
 #'
 #' @export
 #'
 #' @examples
 #' # load the residuals data from residuals.rda in the data folder
+#'
+#' # example 1
 #' residuals = matrix(as.numeric(residuals[, 3:5]), 730, 3)
 #' seasonal_coefs = as.numeric(seasonal_coefs[1, 2:5])
+#' station11 = 1
+#' start_ind11 = 1
+#' end_ind11 = 31
+#' type11 = "HDD"
+#' Fourier11 = Fourier(residuals, station11, start_ind11, end_ind11, type11, seasonal_coefs)
+#' station12 = 1
+#' start_ind12 = 182
+#' end_ind12 = 212
+#' type12 = "CDD"
+#' Fourier12 = Fourier(residuals, station12, start_ind12, end_ind12, type12, seasonal_coefs)
+#'
+#' # examine results
+#' Fourier11$price # HDD price
+#' Fourier12$price # CDD price
+#' head(Fourier11$sresids) # standardised residuals
+#' head(Fourier12$sresids) # standardised residuals
+#' Fourier11$plt # plot
+#' Fourier12$plt # plot
+#'
+#' # example 2
+#' residuals = matrix(as.numeric(residuals[, 53:57]), 730, 3)
+#' seasonal_coefs = as.numeric(seasonal_coefs[51, 2:5])
+#' station21 = 1
+#' start_ind21 = 1
+#' end_ind21 = 31
+#' type21 = "HDD"
+#' Fourier21 = Fourier(residuals, station21, start_ind21, end_ind21, type21, seasonal_coefs)
+#' station22 = 1
+#' start_ind22 = 182
+#' end_ind22 = 212
+#' type22 = "CDD"
+#' Fourier22 = Fourier(residuals, station22, start_ind22, end_ind22, type22, seasonal_coefs)
+#'
+#' # examine results
+#' Fourier21$price # HDD price
+#' Fourier22$price # CDD price
+#' head(Fourier21$sresids) # standardised residuals
+#' head(Fourier22$sresids) # standardised residuals
+#' Fourier21$plt # plot
+#' Fourier22$plt # plot
 Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
@@ -48,6 +91,9 @@ Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
   }
   if (!(length(seasonal_coefs) == 4)) {
     stop("seasonal_coefs should be an array of length 4.") # returns error message if seasonal_coefs is not an array with length 4
+  }
+  if (!(type == "CDD" | type == "HDD" | type == "CAT")) {
+    stop("type should be either CDD, HDD or CAT.") # returns error message if the type of the derivative is not one of the three considered
   }
 
   years = n / 365 # number of years included
@@ -111,6 +157,7 @@ Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
   # initialising parameters for derivatives pricing
   t = 0
   t1 = 24455
+  damp = 0.01
   loc1a = seasonal_coefs[1]
   loc1b = seasonal_coefs[2]
   loc1c = seasonal_coefs[3]
@@ -120,42 +167,35 @@ Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
   # pricing
   if (type == "CDD") { # Cooling Degree Days
     # pricing method for CDD
-    acc = 0
-    for (i in start_ind:end_ind) {
-      seas = loc1a + loc1b * (t1 + i) + loc1c * cos(2 * pi * ((t1 + i) - loc1d) / 365)
-      re = expm(A) %*% sigma(resids, i)
-      re1 = expm(A) %*% residuals[n, ]
-      acc = acc + seas + re[station, station] + re1[station] - clevel
-    }
-
-
-
     i_seq = (t1 + start_ind):(t1 + end_ind)
     i_seq2 = start_ind:end_ind
-    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365)
-    re = sapply(i_seq2, function(i) expm(A * (i - t)) %*% sigma(resids, i))
-    re1 = sapply(i_seq2, function(i) expm(A * (i - t)) %*% residuals[n, ])
-    acc = sum(max(seas + apply(re, 2, function(x) x[station]) + re1[station] - clevel), 0)
+    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
+    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma(resids, i), 1)) # 2nd term in pricing formula
+    re1 = expm::expm(A) %*% residuals[n, ] * damp # 3rd term in pricing formula
+    acc = sum(pmax(seas + apply(re, 2, function(x) x[station]) + re1[station] - clevel, 0)) # payoff
   } else if (type == "HDD") { # Heating Degree Days
     # pricing method for HDD
     i_seq = (t1 + start_ind):(t1 + end_ind)
     i_seq2 = start_ind:end_ind
-    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365)
-    re = sapply(i_seq2, function(i) expm(A) %*% sigma(resids, i))
-    re1 = expm(A) %*% residuals[n, ]
-    acc = sum(max(clevel - seas - apply(re, 2, function(x) x[station]) - re1[station]), 0)
+    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
+    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma(resids, i), 1)) # 2nd term in pricing formula
+    re1 = expm::expm(A) %*% residuals[n, ] * damp # 3rd term in pricing formula
+    acc = sum(pmax(clevel - seas - apply(re, 2, function(x) x[station]) - re1[station], 0)) # payoff
   } else if (type == "CAT") { # Cumulative Average Temperature
     # pricing method for CAT
     i_seq = (t1 + start_ind):(t1 + end_ind)
     i_seq2 = start_ind:end_ind
-    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365)
-    re = sapply(i_seq2, function(i) expm(A) %*% sigma(resids, i))
-    re1 = expm(A) %*% residuals[n, ]
-    acc = sum(seas + apply(re, 2, function(x) x[station]) + re1[station])
+    seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
+    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma(resids, i), 1)) # 2nd term in pricing formula
+    re1 = expm::expm(A) %*% residuals[n, ] * damp # 3rd term in pricing formula
+    acc = sum(seas + apply(re, 2, function(x) x[station]) + re1[station]) # payoff
   }
 
   # returns the computed futures price, standardized residuals and the graph plotted
-  return(list(price = price, sresids = resids, plt = saved_plot))
+  # price = a scalar that is the price of the derivative computed
+  # sresids = n by p matrix containing the standardized residuals computed
+  # plt = plot of the empirical and fitted seasonal variances at the station priced
+  return(list(price = acc, sresids = resids, plt = saved_plot))
 }
 
 # Function that computes and returns the objective function for fitting the seasonal variance function based on the truncated Fourier series
