@@ -123,7 +123,7 @@ adaptBW = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
     bounds = list(lower = lower_bound, upper = upper_bound) # bounds on the objective values
     optim_result = optim(
       par = initial,
-      fn = loc1seasonal,
+      fn = loc1seasonal_a,
       loc1seasonal_var = svar,
       method = "L-BFGS-B",
       lower = lower_bound,
@@ -171,7 +171,7 @@ adaptBW = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
     i_seq = (t1 + start_ind):(t1 + end_ind)
     i_seq2 = start_ind:end_ind
     seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
-    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma(resids, i), 1)) # 2nd term in pricing formula
+    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma_a(resids, i), 1)) # 2nd term in pricing formula
     re1 = expm::expm(A) %*% residuals[n, ] * damp # 3rd term in pricing formula
     acc = sum(pmax(seas + apply(re, 2, function(x) x[station]) + re1[station] - clevel, 0)) # payoff
   } else if (type == "HDD") { # Heating Degree Days
@@ -179,7 +179,7 @@ adaptBW = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
     i_seq = (t1 + start_ind):(t1 + end_ind)
     i_seq2 = start_ind:end_ind
     seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
-    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma(resids, i), 1)) # 2nd term in pricing formula
+    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma_a(resids, i), 1)) # 2nd term in pricing formula
     re1 = expm::expm(A) %*% residuals[n, ] * damp # 3rd term in pricing formula
     acc = sum(pmax(clevel - seas - apply(re, 2, function(x) x[station]) - re1[station], 0)) # payoff
   } else if (type == "CAT") { # Cumulative Average Temperature
@@ -187,7 +187,7 @@ adaptBW = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
     i_seq = (t1 + start_ind):(t1 + end_ind)
     i_seq2 = start_ind:end_ind
     seas = loc1a + loc1b * i_seq + loc1c * cos(2 * pi * (i_seq - loc1d) / 365) # 1st term in pricing formula
-    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma(resids, i), 1)) # 2nd term in pricing formula
+    re = sapply(i_seq2, function(i) expm::expm(A) %*% pmin(sigma_a(resids, i), 1)) # 2nd term in pricing formula
     re1 = expm::expm(A) %*% residuals[n, ] * damp # 3rd term in pricing formula
     acc = sum(seas + apply(re, 2, function(x) x[station]) + re1[station]) # payoff
   }
@@ -200,7 +200,7 @@ adaptBW = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
 }
 
 # Function that computes and returns the objective function for fitting the seasonal variance function based on the truncated Fourier series
-loc1seasonal = function(params, loc1seasonal_var) {
+loc1seasonal_a = function(params, loc1seasonal_var) {
   n_days = 365
   n_harmonics = 32
 
@@ -226,7 +226,7 @@ loc1seasonal = function(params, loc1seasonal_var) {
 }
 
 # Function that computes and returns the covariance matrix of the standardized residuals for each day
-sigma = function(sresids, t) {
+sigma_a = function(sresids, t) {
   if (t == 1 | t == 2 | t == 3) {
     t = t + 3 # adjusting indices
   }
