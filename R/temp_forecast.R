@@ -34,6 +34,7 @@
 #' temp_f1$lower # left endpoints of confidence intervals
 #' temp_f1$upper # right endpoints of confidence intervals
 #' temp_f1$newtemps # past plus futures forecasted temperatures
+#' length(temp_f1$newtemps) # 365 * 6 = 2190
 #'
 #' # example 2
 #' residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
@@ -43,10 +44,11 @@
 #' temp_f2 = temp_forecast(residuals2, station21, seasonal_coefs2, temp)
 #'
 #' # examine results
-#' temp_f1$point # point estimates
-#' temp_f1$lower # left endpoints of confidence intervals
-#' temp_f1$upper # right endpoints of confidence intervals
-#' temp_f1$newtemps # past plus futures forecasted temperatures
+#' temp_f2$point # point estimates
+#' temp_f2$lower # left endpoints of confidence intervals
+#' temp_f2$upper # right endpoints of confidence intervals
+#' temp_f2$newtemps # past plus futures forecasted temperatures
+#' length(temp_f2$newtemps) # 365 * 6 = 2190
 temp_forecast = function(residuals, station, seasonal_coefs, temp) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
