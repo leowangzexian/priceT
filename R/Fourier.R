@@ -46,7 +46,7 @@
 #'
 #' # example 2
 #' residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
-#' seasonal_coefs2 = as.numeric(seasonal_coefs[49, 2:5])
+#' seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
 #' station21 = 3
 #' start_ind21 = 1
 #' end_ind21 = 31

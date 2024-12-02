@@ -1,3 +1,52 @@
+#' Forecasting future temperatures
+#'
+#' @description
+#' Function that returns the point estimates and confidence intervals of the forecasted daily temperatures in the next year
+#' after fitting the historical data to the spatio-temporal models
+#'
+#' @param residuals A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
+#' @param station A numeric index denoting the specific station where forecasts are based on
+#' @param seasonal_coefs A 1 by 4 vector containing the coefficients of the seasonality function at the station considered
+#' @param temp A m by 1 vector containing the past temperatures data at one station over (n / 365) years
+#'
+#' @return A list containing:
+#'         \item{point}{a 1 by 365 vector containing the forecasted temperatures for the next year}
+#'         \item{lower}{a 1 by 365 vector containing the left endpoints of the confidence intervals for the forecasted temperatures}
+#'         \item{upper}{a 1 by 365 vector containing the right endpoints of the confidence intervals for the forecasted temperatures}
+#'         \item{newtemps}{a 1 by (m + 365) vector containing the past and future temperatures at that particular station}
+#'
+#' @export
+#'
+#' @examples
+#' # load the residuals data from residuals.rda in the data folder
+#' # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+#' # load the temp0 data from temp0.rda in the data folder
+#'
+#' # example 1
+#' residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+#' seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+#' temp = as.numeric(temp0[, 3]) # historical temperatures at one station
+#' station11 = 1
+#' temp_f1 = temp_forecast(residuals1, station11, seasonal_coefs1, temp)
+#'
+#' # examine results
+#' temp_f1$point # point estimates
+#' temp_f1$lower # left endpoints of confidence intervals
+#' temp_f1$upper # right endpoints of confidence intervals
+#' temp_f1$newtemps # past plus futures forecasted temperatures
+#'
+#' # example 2
+#' residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+#' seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+#' temp = as.numeric(temp0[, 53]) # historical temperatures at one station
+#' station21 = 3
+#' temp_f2 = temp_forecast(residuals2, station21, seasonal_coefs2, temp)
+#'
+#' # examine results
+#' temp_f1$point # point estimates
+#' temp_f1$lower # left endpoints of confidence intervals
+#' temp_f1$upper # right endpoints of confidence intervals
+#' temp_f1$newtemps # past plus futures forecasted temperatures
 temp_forecast = function(residuals, station, seasonal_coefs, temp) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
@@ -106,10 +155,13 @@ temp_forecast = function(residuals, station, seasonal_coefs, temp) {
   upper_conf[upper_conf < -10 | upper_conf > 100] = NA; upper_conf = zoo::na.approx(upper_conf, rule = 3)
   full_temps = c(temp, new_temps) # appending the new temperatures in the future to the list of past temperatures
 
-  # returns the computed futures price and parameter mu
-  # price = a scalar that is the price of the derivative computed
-  # mu = 1 by p vector containing the parameter mu of the fitted NIG distribution for the standardized residuals
-  return(list(price = acc, mu = mu))
+  # returns the future temperatures (point estimates), their lower and upper levels of the corresponding confidence intervals
+  # and the updated list of temperatures (appending the newly forecasted temperatures to the past temperatures)
+  # point = a 1 by 365 vector containing the forecasted temperatures for the next year
+  # lower = a 1 by 365 vector containing the left endpoints of the confidence intervals for the forecasted temperatures
+  # upper = a 1 by 365 vector containing the right endpoints of the confidence intervals for the forecasted temperatures
+  # newtemps = a 1 by 365 * 6 vector containing the past and future temperatures at that particular station
+  return(list(point = new_temps, lower = lower_conf, upper = upper_conf, newtemps = full_temps))
 }
 
 # Function that computes and returns the objective function for fitting the seasonal variance function
