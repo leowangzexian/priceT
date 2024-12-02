@@ -39,8 +39,16 @@ Fourier = function(residuals, station, start_ind, end_ind, type) {
 
   years = n / 365 # number of years included
   residt = do.call(ts.union, lapply(1:p, function(i) as.ts(residuals[, i]))) # format resid as time series
-  residtar = ar(residt, aic = FALSE, order.max = 3) # fit to VAR model
+  residtar = ar(residt, aic = FALSE, order.max = 1) # fit to VAR model
   resids = as.matrix(residtar$resid) # residuals from fitted VAR model
+  coefs = as.matrix(residtar$ar) # get coefficients of fitted model
+  dis = array(coefs, dim = c(p, p))
+
+  # transforming to continuous-time coefficients
+  Ac = - diag(p)
+  Ac[lower.tri(Ac)] = 1
+  A = do.call(rbind, lapply(0:(p - 1), function(i) solve(Ac, dis[p - i, ])))
+
   resids = matrix(as.numeric(resids), n, p)
   resids[1, ] = resids[1 + 365, ] # fill in the NA values
   resids[2, ] = resids[2 + 365, ] # fill in the NA values
