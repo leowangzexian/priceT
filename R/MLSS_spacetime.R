@@ -5,11 +5,11 @@
 #' to estimate multivariate seasonal volatility
 #'
 #' @param residuals A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
-#' @param station An numeric index denoting the specific station that the price of the temperature futures depends on
-#' @param start_ind An numeric index for the start of the measurement period
-#' @param end_ind An numeric index for the end of the measurement period
+#' @param station A numeric index denoting the specific station that the price of the temperature futures depends on
+#' @param start_ind A numeric index for the start of the measurement period
+#' @param end_ind A numeric index for the end of the measurement period
 #' @param type A string denoting the type of the temperature futures, either CDD, HDD or CAT
-#' @param seasonal_coefs A 1 by 4 vector contaning the coefficients of the seasonality function at the station to be priced
+#' @param seasonal_coefs A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced
 #'
 #' @return A list containing:
 #'         \item{price}{a scalar that is the price of the derivative computed}

@@ -1,4 +1,4 @@
-temp_forecast = function(residuals, station, seasonal_coefs) {
+temp_forecast = function(residuals, station, seasonal_coefs, temp) {
   # compatibility checks
   if (is.matrix(residuals) == FALSE) {
     stop("residuals should be a matrix.") # returns error message if the input resid is not a matrix
@@ -16,6 +16,9 @@ temp_forecast = function(residuals, station, seasonal_coefs) {
   }
   if (!(length(seasonal_coefs) == 4)) {
     stop("seasonal_coefs should be an array of length 4.") # returns error message if seasonal_coefs is not an array with length 4
+  }
+  if (is.vector(temp) == FALSE) {
+    stop("temp should be a vector.") # returns error message if the input temp is not a vector
   }
 
   years = n / 365 # number of years included

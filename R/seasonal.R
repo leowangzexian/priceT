@@ -19,7 +19,7 @@
 #' # load the temp0 data from temp0.rda in the data folder
 #'
 #' # example 1
-#' temp = as.numeric(temp0[, 3]) # historical temperaures at one station
+#' temp = as.numeric(temp0[, 3]) # historical temperatures at one station
 #' seasonal1 = seasonal(temp)
 #'
 #' # examine results
@@ -28,7 +28,7 @@
 #' seasonal1$plt # plot
 #'
 #' # example 2
-#' temp = as.numeric(temp0[, 50]) # historical temperaures at one station
+#' temp = as.numeric(temp0[, 50]) # historical temperatures at one station
 #' seasonal2 = seasonal(temp)
 #'
 #' # examine results
