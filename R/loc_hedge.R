@@ -105,7 +105,8 @@ loc_hedge = function(residuals, station) {
     par = init,
     fn = obj_s,
     hedge = hedge,
-    target = target
+    target = target,
+    p = p
   ) # unconstrained optimisation
   optim_weights = optim_r$par
   optim_weights = optim_weights / sum(optim_weights) # normalising weights
@@ -142,6 +143,6 @@ loc1seasonal_s = function(params, loc1seasonal_var) {
 }
 
 # the objective function for minimisation to find the optimal weights
-obj_s = function(optim_weights, hedge, target) {
+obj_s = function(optim_weights, hedge, target, p) {
   return(sum(hedge %*% optim_weights[1:(p - 1)] - target))
 }
