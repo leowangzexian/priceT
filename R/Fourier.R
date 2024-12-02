@@ -34,13 +34,13 @@ Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
   if (p < 3) {
     stop("Need at least three stations.") # returns error message if the number of stations < 3
   }
-  if (is.integer(station) == FALSE | station <= 0 | station > p) {
+  if (is.numeric(station) == FALSE | station <= 0 | station > p) {
     stop("station should be a positive integer.") # returns error message if the index is not within the possible range
   }
-  if (is.integer(start_ind == FALSE) | start_ind <= 0 | start_ind > 365) {
+  if (is.numeric(start_ind) == FALSE | start_ind <= 0 | start_ind > 365) {
     stop("start_ind should be an integer between 1 and 365.") # returns error message if the starting date is not between 1 and 365
   }
-  if (is.integer(end_ind == FALSE) | end_ind <= 0 | end_ind > 365) {
+  if (is.numeric(end_ind) == FALSE | end_ind <= 0 | end_ind > 365) {
     stop("end_ind should be an integer between 1 and 365.") # returns error message if the ending date is not between 1 and 365
   }
   if (start_ind >= end_ind) {
@@ -122,9 +122,10 @@ Fourier = function(residuals, station, start_ind, end_ind, type, seasonal_coefs)
     # pricing method for CDD
     acc = 0
     for (i in start_ind:end_ind) {
-      seas = loc1a + loc1b * i + loc1c * cos(2 * pi * (i - loc1d) / 365)
-      re = expm(A * (i - t)) * sigma(resids, i)
-      acc = acc + seas + re[station, station] - clevel
+      seas = loc1a + loc1b * (t1 + i) + loc1c * cos(2 * pi * ((t1 + i) - loc1d) / 365)
+      re = expm::expm(A * (i - t)) %*% sigma(resids, i)
+      re1 = expm::expm(A * (i - t)) %*% residuals[n, ]
+      acc = acc + seas + re[station, station] + re1[station] - clevel
     }
   } else if (type == "HDD") { # Heating Degree Days
     # pricing method for HDD
