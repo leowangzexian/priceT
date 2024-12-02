@@ -11,6 +11,9 @@
 #'         \item{}{}
 #'         \item{}{}
 #'         \item{}{}
+#'         \item{}{}
+#'         \item{}{}
+#'         \item{}{}
 #'
 #' @export
 #'
@@ -26,17 +29,33 @@ diagnostics = function(resid) {
   }
 
   kstest = ks.test(resid, "pnorm") # normality test
-
+  teststat = kstest$statistic # test statistic from Kolmogorov-Smirnov test
+  pvalue = kstest$p.value # p-value from Kolmogorov-Smirnov test
   qqnorm(resid)
   qqline(resid, col = "blue") # QQ plot against Gaussian
   saved_plot1 = recordPlot() # save the plot
 
   # QQ plot against generalised hyperbolic distribution
-  # qqghyp(resid, spline.points = 100)
-  # saved_plot2 = recordPlot() # save the plot
+  fittedGH = ghyp::fit.ghypuv(resid, silent = TRUE) # fitting the data to the generalised hyperbolic distribution first
+  ghyp::qqghyp(fittedGH, spline.points = 100) # QQ plot against asymmetric generalised hyperbolic distribution
+  saved_plot2 = recordPlot() # save the plot
 
   # Kernel density estimates
-  plot(density(resid, kernel = "epanechnikov"), main = "Kernel density estimate", xlab = "deseasonalized temperatures")
+  plot(density(resid, kernel = "epanechnikov"), main = "Kernel density estimate", xlab = "deseasonalized temperatures",
+       col = "blue") # plotting the kernel density estimate with a blue curve
+  curve(dnorm(x, mean = mean(resid), sd = sd(resid)),
+        add = TRUE, col = "red", lwd = 2, lty = 3) # plotting the Gaussian distribution with red curve on the same graph to enable comparison
+  legend("topright", legend = c("kernel density", "Gaussian"),
+         col = c("blue", "red"), lty = c(1, 3), lwd = 2, cex = 0.8) # add legend to distinguish between the two lines
+  saved_plot3 = recordPlot() # save the plot
 
-  return(list(kstest = kstest, plt1 = saved_plot1))
+  # returns the test statistic and p-value from the Kolmogorov-Smirnov normality test,
+  # QQ plot against normal distribution, QQ plot against generalised hyperbolic distribution
+  # and the kernel density estimate of the deseasonalized temperatures at one particular site
+  # teststat = test statistic from the Kolmogorov-Smirnov normality test
+  # pvalue = p-value from the Kolmogorov-Smirnov normality test (smaller p-value, especially close to 0, indicates rejection of the normality assumption)
+  # plt1 = QQ plot against normal distribution
+  # plt2 = QQ plot against generalised hyperbolic distribution
+  # plt3 = kernel density estimate (compared against Gaussian)
+  return(list(teststat = teststat, pvalue = pvalue, plt1 = saved_plot1, plt2 = saved_plot2, plt3 = saved_plot3))
 }
