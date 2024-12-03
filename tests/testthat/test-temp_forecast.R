@@ -7,7 +7,7 @@ test_that("the function temp_forecast handles errors appropriately", {
   # load the temp0 data from temp0.rda in the data folder
   # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # specify correct inputs
-  residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+  residuals1 = matrix(rnorm(730 * 3), 730, 3)
   seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
   temp = as.numeric(temp0[, 3]) # historical temperatures at one station
   station11 = 1
@@ -31,7 +31,7 @@ test_that("the outputs of the function temp_forecast are in the correct format",
   # load the temp0 data from temp0.rda in the data folder
   # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # 1st test case
-  residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+  residuals1 = matrix(rnorm(730 * 3), 730, 3)
   seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
   temp = as.numeric(temp0[, 3]) # historical temperatures at one station
   station11 = 1
@@ -43,7 +43,7 @@ test_that("the outputs of the function temp_forecast are in the correct format",
   expect_equal(length(temp_f1$newtemps), 2190)
 
   # 2nd test case
-  residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+  residuals2 = matrix(rnorm(730 * 5), 730, 5)
   seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
   temp = as.numeric(temp0[, 53]) # historical temperatures at one station
   station21 = 3

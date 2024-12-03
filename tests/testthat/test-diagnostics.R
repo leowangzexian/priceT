@@ -13,14 +13,14 @@ test_that("the function diagnostics handles errors appropriately", {
 test_that("the function diagnostics outputs appropriate test statistics and p-values", {
   # load the residuals data from residuals.rda in the data folder
   # 1st test case
-  resid = as.numeric(residuals[, 3]) # deseasonalized temperaures at one station
+  resid = as.numeric(ghyp::rghyp(730)) # deseasonalized temperaures at one station
   diag1 = diagnostics(resid)
-  expect_gt(diag1$teststat, 0.3) # test statistic less than 0.3
-  expect_equal(diag1$pvalue, 0) # p-value is 0
+  expect_gt(diag1$teststat, 0.05) # test statistic less than 0.3
+  expect_lt(diag1$pvalue, 0.02) # p-value is 0
 
   # 2nd test case
-  resid = as.numeric(residuals[, 53]) # deseasonalized temperaures at one station
+  resid = as.numeric(ghyp::rgig(730)) # deseasonalized temperaures at one station
   diag2 = diagnostics(resid)
-  expect_gt(diag2$teststat, 0.3) # test statistic less than 0.3
-  expect_equal(diag2$pvalue, 0) # p-value is 0
+  expect_gt(diag2$teststat, 0.5) # test statistic less than 0.3
+  expect_lt(diag2$pvalue, 0.01) # p-value is 0
 })

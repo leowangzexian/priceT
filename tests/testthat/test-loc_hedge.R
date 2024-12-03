@@ -5,7 +5,7 @@ library(testthat)
 test_that("the function loc_hedge handles errors appropriately", {
   # load the residuals data from residuals.rda in the data folder
   # specify correct inputs
-  residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+  residuals1 = matrix(rnorm(730 * 3), 730, 3)
   station1 = 1
 
   # test for residuals
@@ -19,7 +19,7 @@ test_that("the function loc_hedge handles errors appropriately", {
 test_that("the function loc_hedge outputs the correct optimized weights", {
   # load the residuals data from residuals.rda in the data folder
   # 1st test case
-  residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+  residuals1 = matrix(rnorm(730 * 3), 730, 3)
   station1 = 1
   loc_hedge1 = loc_hedge(residuals1, station1)
 
@@ -27,7 +27,7 @@ test_that("the function loc_hedge outputs the correct optimized weights", {
   expect_equal(sum(loc_hedge1$optim_weights), 1) # optimal weights sum to one
 
   # 2nd test case
-  residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+  residuals2 = matrix(rnorm(730 * 5), 730, 5)
   station2 = 3
   loc_hedge2 = loc_hedge(residuals2, station2)
 
