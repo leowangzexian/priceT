@@ -10,7 +10,7 @@
 #' @param end_ind A numeric index for the end of the measurement period
 #' @param type A string denoting the type of the temperature futures, either CDD, HDD or CAT
 #' @param seasonal_coefs A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced
-#' @param func A function to compute the futures price, either Fourier, adaptBW or MLSS_spacetime
+#' @param func A function to compute the futures price (taken as Fourier_c)
 #'
 #' @return A list containing:
 #'         \item{theta}{a scalar that is the calibrated risk-neutral parameter}
