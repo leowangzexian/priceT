@@ -74,9 +74,9 @@ Rcpp::NumericVector loc1optim(Rcpp::NumericVector initial, Rcpp::NumericVector t
 // Function to fit the seasonal model
 // [[Rcpp::export]]
 Rcpp::List seasonal_cpp(Rcpp::NumericVector temp) {
-  // Compatibility check: ensure temp is non-empty
+  // compatibility check
   if (temp.size() == 0) {
-    Rcpp::stop("temp should be a non-empty numeric vector.");
+    Rcpp::stop("temp should be a non-empty numeric vector."); // returns error message if the input temp is not a vector
   }
 
   int n = temp.size();
