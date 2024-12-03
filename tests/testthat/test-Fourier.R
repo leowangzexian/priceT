@@ -1,6 +1,10 @@
 library(testthat)
 
+# devtools::load_all()
+
 test_that("the function Fourier handles errors appropriately", {
+  # load the residuals data from residuals.rda in the data folder
+  # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # specify correct inputs
   residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
   seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
@@ -30,7 +34,7 @@ test_that("the function Fourier handles errors appropriately", {
 })
 
 test_that("the function Fourier outputs the correct price", {
-  # load the temp0 data from temp0.rda in the data folder
+  # load the residuals data from residuals.rda in the data folder
   # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # 1st test case
   residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
@@ -70,7 +74,7 @@ test_that("the function Fourier outputs the correct price", {
 })
 
 test_that("the function Fourier outputs values of the seasonal variance function in the correct format", {
-  # load the temp0 data from temp0.rda in the data folder
+  # load the residuals data from residuals.rda in the data folder
   # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # 1st test case
   residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)

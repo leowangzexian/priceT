@@ -1,5 +1,7 @@
 library(testthat)
 
+# devtools::load_all()
+
 test_that("the function seasonal_c handles errors appropriately", {
   # test with input being a matrix
   expect_error(seasonal_c(matrix(c(2, 2, 2, 2), 2, 2)))

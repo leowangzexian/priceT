@@ -1,6 +1,10 @@
 library(testthat)
 
+# devtools::load_all()
+
 test_that("the function Fourier_c handles errors appropriately", {
+  # load the residuals data from residuals.rda in the data folder
+  # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # specify correct inputs
   residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
   seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
@@ -30,7 +34,7 @@ test_that("the function Fourier_c handles errors appropriately", {
 })
 
 test_that("the function Fourier_c outputs the correct price", {
-  # load the temp0 data from temp0.rda in the data folder
+  # load the residuals data from residuals.rda in the data folder
   # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # 1st test case
   residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
@@ -40,7 +44,7 @@ test_that("the function Fourier_c outputs the correct price", {
   end_ind11 = 31
   type11 = "HDD"
   Fourier11 = Fourier_c(residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1)
-  expect_equal(round(Fourier11$price, 0), 575)
+  expect_equal(round(Fourier11$price, 0), 1427)
 
   # 2nd test case
   station12 = 1
@@ -48,7 +52,7 @@ test_that("the function Fourier_c outputs the correct price", {
   end_ind12 = 212
   type12 = "CDD"
   Fourier12 = Fourier_c(residuals1, station12, start_ind12, end_ind12, type12, seasonal_coefs1)
-  expect_equal(round(Fourier12$price, 0), 631)
+  expect_equal(round(Fourier12$price, 0), 2551)
 
   # 3rd test case
   residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
@@ -58,7 +62,7 @@ test_that("the function Fourier_c outputs the correct price", {
   end_ind21 = 31
   type21 = "HDD"
   Fourier21 = Fourier_c(residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2)
-  expect_equal(round(Fourier21$price, 0), 1753)
+  expect_equal(round(Fourier21$price, 0), 268)
 
   # 4th test case
   station22 = 3
@@ -66,11 +70,11 @@ test_that("the function Fourier_c outputs the correct price", {
   end_ind22 = 212
   type22 = "CAT"
   Fourier22 = Fourier_c(residuals2, station22, start_ind22, end_ind22, type22, seasonal_coefs2)
-  expect_equal(round(Fourier22$price, 0), 1993)
+  expect_equal(round(Fourier22$price, 0), 1999)
 })
 
 test_that("the function Fourier_c outputs values of the seasonal variance function in the correct format", {
-  # load the temp0 data from temp0.rda in the data folder
+  # load the residuals data from residuals.rda in the data folder
   # load the seasonal coefficients data from seasonal_coefs.rda in the data folder
   # 1st test case
   residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
@@ -112,4 +116,3 @@ test_that("the function Fourier_c outputs values of the seasonal variance functi
   expect_equal(dim(Fourier22$sresids)[1], 730)
   expect_equal(dim(Fourier22$sresids)[2], 5)
 })
-

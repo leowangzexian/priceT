@@ -1,5 +1,7 @@
 library(testthat)
 
+# devtools::load_all()
+
 test_that("the function seasonal handles errors appropriately", {
   # test with input being a number
   expect_error(seasonal("temp"))
