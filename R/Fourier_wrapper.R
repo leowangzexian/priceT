@@ -61,6 +61,37 @@
 #' head(Fourier21$sresids) # standardised residuals
 #' head(Fourier22$sresids) # standardised residuals
 Fourier_c = function(residuals, station, start_ind, end_ind, type, seasonal_coefs) {
+  # compatibility checks
+  if (is.matrix(residuals) == FALSE) {
+    stop("residuals should be a matrix.") # returns error message if the input resid is not a matrix
+  }
+  n = dim(residuals)[1]
+  p = dim(residuals)[2]
+  if (n < 365 * 2) {
+    stop("Need at least two years of data for resid.") # returns error message if the data inputted is less than 2 years
+  }
+  if (p < 3) {
+    stop("Need at least three stations.") # returns error message if the number of stations < 3
+  }
+  if (is.numeric(station) == FALSE | station <= 0 | station > p) {
+    stop("station should be a positive integer.") # returns error message if the index is not within the possible range
+  }
+  if (is.numeric(start_ind) == FALSE | start_ind <= 0 | start_ind > 365) {
+    stop("start_ind should be an integer between 1 and 365.") # returns error message if the starting date is not between 1 and 365
+  }
+  if (is.numeric(end_ind) == FALSE | end_ind <= 0 | end_ind > 365) {
+    stop("end_ind should be an integer between 1 and 365.") # returns error message if the ending date is not between 1 and 365
+  }
+  if (start_ind >= end_ind) {
+    stop("start_ind should be smaller than end_ind") # returns error message if the starting date is not smaller than the ending date
+  }
+  if (!(length(seasonal_coefs) == 4)) {
+    stop("seasonal_coefs should be an array of length 4.") # returns error message if seasonal_coefs is not an array with length 4
+  }
+  if (!(type == "CDD" | type == "HDD" | type == "CAT")) {
+    stop("type should be either CDD, HDD or CAT.") # returns error message if the type of the derivative is not one of the three considered
+  }
+
   result = Fourier_cpp(residuals, station, start_ind, end_ind, type, seasonal_coefs)
   return(result)
 }
