@@ -16,13 +16,13 @@ double cos_approx(double x) {
 
 // Function that computes the objective function for the seasonal fitting
 // [[Rcpp::export]]
-double loc1temp(Rcpp::NumericVector params, double* t, Rcpp::NumericVector loc1temperatures) {
+double loc1temp(Rcpp::NumericVector params, Rcpp::NumericVector t, Rcpp::NumericVector loc1temperatures) {
   double S2 = 0.0;
   int n = loc1temperatures.size();
 
   // Compute the seasonality function and the squared differences
   for (int i = 0; i < n; ++i) {
-    double S = params[0] + params[1] * t[i] + params[2] * cos_approx(2 * 3.14159265358979323846 * (t[i] - params[3]) / 365);
+    double S = params[0] + params[1] * t[i] + params[2] * cos(2 * 3.14159265358979323846 * (t[i] - params[3]) / 365);
     S2 += (S - loc1temperatures[i]) * (S - loc1temperatures[i]);
   }
 
