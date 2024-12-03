@@ -11,6 +11,57 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// loc1seasonal_c
+Rcpp::NumericVector loc1seasonal_c(const Rcpp::NumericVector& params, const Rcpp::NumericVector& loc1seasonal_var);
+RcppExport SEXP _priceT_loc1seasonal_c(SEXP paramsSEXP, SEXP loc1seasonal_varSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type params(paramsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type loc1seasonal_var(loc1seasonal_varSEXP);
+    rcpp_result_gen = Rcpp::wrap(loc1seasonal_c(params, loc1seasonal_var));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sigma_c
+Rcpp::NumericMatrix sigma_c(const Rcpp::NumericMatrix& sresids);
+RcppExport SEXP _priceT_sigma_c(SEXP sresidsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type sresids(sresidsSEXP);
+    rcpp_result_gen = Rcpp::wrap(sigma_c(sresids));
+    return rcpp_result_gen;
+END_RCPP
+}
+// create_sequence
+Rcpp::NumericVector create_sequence(int start, int end);
+RcppExport SEXP _priceT_create_sequence(SEXP startSEXP, SEXP endSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type start(startSEXP);
+    Rcpp::traits::input_parameter< int >::type end(endSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_sequence(start, end));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Fourier_cpp
+Rcpp::List Fourier_cpp(const Rcpp::NumericMatrix& residuals, int station, int start_ind, int end_ind, const Rcpp::String& type, const Rcpp::NumericVector& seasonal_coefs);
+RcppExport SEXP _priceT_Fourier_cpp(SEXP residualsSEXP, SEXP stationSEXP, SEXP start_indSEXP, SEXP end_indSEXP, SEXP typeSEXP, SEXP seasonal_coefsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type residuals(residualsSEXP);
+    Rcpp::traits::input_parameter< int >::type station(stationSEXP);
+    Rcpp::traits::input_parameter< int >::type start_ind(start_indSEXP);
+    Rcpp::traits::input_parameter< int >::type end_ind(end_indSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::String& >::type type(typeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type seasonal_coefs(seasonal_coefsSEXP);
+    rcpp_result_gen = Rcpp::wrap(Fourier_cpp(residuals, station, start_ind, end_ind, type, seasonal_coefs));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cos_approx
 double cos_approx(double x);
 RcppExport SEXP _priceT_cos_approx(SEXP xSEXP) {
@@ -22,16 +73,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// loc1temp
-Rcpp::NumericVector loc1temp(Rcpp::NumericVector params, Rcpp::NumericVector t, Rcpp::NumericVector loc1temperatures);
-RcppExport SEXP _priceT_loc1temp(SEXP paramsSEXP, SEXP tSEXP, SEXP loc1temperaturesSEXP) {
+// loc1temp_c
+Rcpp::NumericVector loc1temp_c(Rcpp::NumericVector params, Rcpp::NumericVector t, Rcpp::NumericVector loc1temperatures);
+RcppExport SEXP _priceT_loc1temp_c(SEXP paramsSEXP, SEXP tSEXP, SEXP loc1temperaturesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type params(paramsSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type t(tSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type loc1temperatures(loc1temperaturesSEXP);
-    rcpp_result_gen = Rcpp::wrap(loc1temp(params, t, loc1temperatures));
+    rcpp_result_gen = Rcpp::wrap(loc1temp_c(params, t, loc1temperatures));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -61,8 +112,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_priceT_loc1seasonal_c", (DL_FUNC) &_priceT_loc1seasonal_c, 2},
+    {"_priceT_sigma_c", (DL_FUNC) &_priceT_sigma_c, 1},
+    {"_priceT_create_sequence", (DL_FUNC) &_priceT_create_sequence, 2},
+    {"_priceT_Fourier_cpp", (DL_FUNC) &_priceT_Fourier_cpp, 6},
     {"_priceT_cos_approx", (DL_FUNC) &_priceT_cos_approx, 1},
-    {"_priceT_loc1temp", (DL_FUNC) &_priceT_loc1temp, 3},
+    {"_priceT_loc1temp_c", (DL_FUNC) &_priceT_loc1temp_c, 3},
     {"_priceT_loc1optim", (DL_FUNC) &_priceT_loc1optim, 3},
     {"_priceT_seasonal_cpp", (DL_FUNC) &_priceT_seasonal_cpp, 1},
     {NULL, NULL, 0}

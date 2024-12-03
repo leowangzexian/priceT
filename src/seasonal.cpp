@@ -16,7 +16,7 @@ double cos_approx(double x) {
 
 // Function that computes the objective function for the seasonal fitting
 // [[Rcpp::export]]
-Rcpp::NumericVector loc1temp(Rcpp::NumericVector params, Rcpp::NumericVector t, Rcpp::NumericVector loc1temperatures) {
+Rcpp::NumericVector loc1temp_c(Rcpp::NumericVector params, Rcpp::NumericVector t, Rcpp::NumericVector loc1temperatures) {
   double S2 = 0.0;
   int n = loc1temperatures.size();
 
@@ -48,13 +48,13 @@ Rcpp::NumericVector loc1optim(Rcpp::NumericVector initial, Rcpp::NumericVector t
     Rcpp::NumericVector gradient(4);
 
     // Compute the objective function value
-    Rcpp::NumericVector S2 = loc1temp(params, t, loc1temperatures);
+    Rcpp::NumericVector S2 = loc1temp_c(params, t, loc1temperatures);
 
     // Compute partial derivatives for each parameter (numerical gradient)
     for (int i = 0; i < 4; ++i) {
       Rcpp::NumericVector params_up = params;
       params_up[i] += 1e-6;  // Small perturbation for numerical gradient
-      gradient[i] = (loc1temp(params_up, t, loc1temperatures)[0] - S2[0]) / 1e-6;
+      gradient[i] = (loc1temp_c(params_up, t, loc1temperatures)[0] - S2[0]) / 1e-6;
     }
 
     // Update the parameters based on the gradient
