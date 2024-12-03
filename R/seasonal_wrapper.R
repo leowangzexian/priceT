@@ -33,6 +33,11 @@
 #' c(seasonal2$a, seasonal2$b, seasonal2$c, seasonal2$d) # coefficients
 #' head(seasonal2$seasonality) # fitted values of the seasonal function
 seasonal_c = function(temp) {
+  # compatibility check
+  if (is.vector(temp) == FALSE) {
+    stop("temp should be a vector.") # returns error message if the input temp is not a vector
+  }
+
   result = seasonal_cpp(temp)
   return(result)
 }
