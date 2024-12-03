@@ -6,7 +6,7 @@
 \title{Stations}
 \format{
 A matrix with 225 rows and 7 columns
-\describe {
+\describe{
 \item{id}{id of each station}
 \item{name}{name of the location}
 \item{country}{country of the station, either US or CA}

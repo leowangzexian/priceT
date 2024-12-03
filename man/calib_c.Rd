@@ -52,7 +52,8 @@ start_ind11 = 182
 end_ind11 = 212
 type11 = "CDD"
 market_price1 = 2500
-calib11 = calib_c(market_price1, residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1, Fourier_c)
+calib11 = calib_c(market_price1, residuals1, station11, start_ind11,
+                  end_ind11, type11, seasonal_coefs1, Fourier_c)
 
 # examine results
 calib11$theta # calibrated risk-neutral parameter when using Fourier
@@ -66,7 +67,8 @@ start_ind21 = 1
 end_ind21 = 31
 type21 = "HDD"
 market_price2 = 280
-calib21 = calib_c(market_price2, residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2, Fourier_c)
+calib21 = calib_c(market_price2, residuals2, station21, start_ind21,
+                  end_ind21, type21, seasonal_coefs2, Fourier_c)
 
 # examine results
 calib21$theta # calibrated risk-neutral parameter when using Fourier

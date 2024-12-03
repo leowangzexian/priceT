@@ -52,9 +52,12 @@ start_ind11 = 182
 end_ind11 = 212
 type11 = "CDD"
 market_price1 = 600
-calib11 = calib(market_price1, residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1, Fourier)
-calib12 = calib(market_price1, residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1, adaptBW)
-calib13 = calib(market_price1, residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1, MLSS_spacetime)
+calib11 = calib(market_price1, residuals1, station11, start_ind11,
+                end_ind11, type11, seasonal_coefs1, Fourier)
+calib12 = calib(market_price1, residuals1, station11, start_ind11,
+                end_ind11, type11, seasonal_coefs1, adaptBW)
+calib13 = calib(market_price1, residuals1, station11, start_ind11,
+                end_ind11, type11, seasonal_coefs1, MLSS_spacetime)
 
 # examine results
 calib11$theta # calibrated risk-neutral parameter when using Fourier
@@ -72,9 +75,12 @@ start_ind21 = 1
 end_ind21 = 31
 type21 = "HDD"
 market_price2 = 650
-calib21 = calib(market_price2, residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2, Fourier)
-calib22 = calib(market_price2, residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2, adaptBW)
-calib23 = calib(market_price2, residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2, MLSS_spacetime)
+calib21 = calib(market_price2, residuals2, station21, start_ind21,
+                end_ind21, type21, seasonal_coefs2, Fourier)
+calib22 = calib(market_price2, residuals2, station21, start_ind21,
+                end_ind21, type21, seasonal_coefs2, adaptBW)
+calib23 = calib(market_price2, residuals2, station21, start_ind21,
+                end_ind21, type21, seasonal_coefs2, MLSS_spacetime)
 
 # examine results
 calib21$theta # calibrated risk-neutral parameter when using Fourier

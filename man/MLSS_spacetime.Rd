@@ -39,12 +39,14 @@ station11 = 1
 start_ind11 = 1
 end_ind11 = 31
 type11 = "HDD"
-MLSS_spacetime11 = MLSS_spacetime(residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1)
+MLSS_spacetime11 = MLSS_spacetime(residuals1, station11, start_ind11,
+                                  end_ind11, type11, seasonal_coefs1)
 station12 = 1
 start_ind12 = 182
 end_ind12 = 212
 type12 = "CDD"
-MLSS_spacetime12 = MLSS_spacetime(residuals1, station12, start_ind12, end_ind12, type12, seasonal_coefs1)
+MLSS_spacetime12 = MLSS_spacetime(residuals1, station12, start_ind12,
+                                  end_ind12, type12, seasonal_coefs1)
 
 # examine results
 MLSS_spacetime11$price # HDD price
@@ -59,12 +61,14 @@ station21 = 3
 start_ind21 = 1
 end_ind21 = 31
 type21 = "HDD"
-MLSS_spacetime21 = MLSS_spacetime(residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2)
+MLSS_spacetime21 = MLSS_spacetime(residuals2, station21, start_ind21,
+                                  end_ind21, type21, seasonal_coefs2)
 station22 = 3
 start_ind22 = 182
 end_ind22 = 212
 type22 = "CAT"
-MLSS_spacetime22 = MLSS_spacetime(residuals2, station22, start_ind22, end_ind22, type22, seasonal_coefs2)
+MLSS_spacetime22 = MLSS_spacetime(residuals2, station22, start_ind22,
+                                  end_ind22, type22, seasonal_coefs2)
 
 # examine results
 MLSS_spacetime21$price # HDD price
