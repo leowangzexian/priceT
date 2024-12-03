@@ -25,7 +25,8 @@
 #'
 #' # examine results
 #' diag1$teststat # test statistic from the Kolmogorov-Smirnov normality test
-#' diag1$pvalue # p-value from the Kolmogorov-Smirnov normality test (smaller p-value, especially close to 0, indicates rejection of the normality assumption)
+#' diag1$pvalue # p-value from the Kolmogorov-Smirnov normality test
+#' # smaller p-value, especially close to 0, indicates rejection of the normality assumption
 #' diag1$plt1 # QQ plot against normal
 #' diag1$plt2 # QQ plot against generalised hyperbolic
 #' diag1$plt3 # kernel density estimate
@@ -36,7 +37,8 @@
 #'
 #' # examine results
 #' diag2$teststat # test statistic from the Kolmogorov-Smirnov normality test
-#' diag2$pvalue # p-value from the Kolmogorov-Smirnov normality test (smaller p-value, especially close to 0, indicates rejection of the normality assumption)
+#' diag2$pvalue # p-value from the Kolmogorov-Smirnov normality test
+#' # smaller p-value, especially close to 0, indicates rejection of the normality assumption
 #' diag2$plt1 # QQ plot against normal
 #' diag2$plt2 # QQ plot against generalised hyperbolic
 #' diag2$plt3 # kernel density estimate
