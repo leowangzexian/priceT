@@ -11,7 +11,7 @@
 #'  \item{latitude}{latitude of the station}
 #'  \item{longitude}{longitude of the station}
 #'  \item{altitude}{altitude of the station in meters}
-#' }
+#'}
 #'
 #' @source National Centers for Environmental Information and World Meteorological Organization
 "tempstations"
