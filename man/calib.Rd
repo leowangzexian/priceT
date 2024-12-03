@@ -4,21 +4,83 @@
 \alias{calib}
 \title{Calibrating risk-neutral parameters}
 \usage{
-calib(theta, price, market_price)
+calib(
+  market_price,
+  residuals,
+  station,
+  start_ind,
+  end_ind,
+  type,
+  seasonal_coefs,
+  func
+)
 }
 \arguments{
-\item{theta}{A q times 1 vector}
+\item{market_price}{A scalar that is the actual futures prices traded in the market}
 
-\item{price}{A k times 1 vector containing the computed futures prices}
+\item{residuals}{A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)}
 
-\item{market_price}{A k times 1 vector containing the actual futures prices traded in the market}
+\item{station}{A numeric index denoting the specific station that the price of the temperature futures depends on}
+
+\item{start_ind}{A numeric index for the start of the measurement period}
+
+\item{end_ind}{A numeric index for the end of the measurement period}
+
+\item{type}{A string denoting the type of the temperature futures, either CDD, HDD or CAT}
+
+\item{seasonal_coefs}{A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced}
+
+\item{func}{A function to compute the futures price, either Fourier, adaptBW or MLSS_spacetime}
 }
 \value{
 A list containing:
-\item{}{}
-\item{}{}
-\item{}{}
+\item{theta}{a scalar that is the calibrated risk-neutral parameter}
+\item{error}{a scalar that is the in-sample pricing error}
 }
 \description{
 Function that returns the calibrated risk-neutral parameters and in-sample pricing errors based on the market prices
+}
+\examples{
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+station11 = 1
+start_ind11 = 182
+end_ind11 = 212
+type11 = "CDD"
+market_price1 = 600
+calib11 = calib(market_price1, residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1, Fourier)
+calib12 = calib(market_price1, residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1, adaptBW)
+calib13 = calib(market_price1, residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1, MLSS_spacetime)
+
+# examine results
+calib11$theta # calibrated risk-neutral parameter when using Fourier
+calib12$theta # calibrated risk-neutral parameter when using adaptBW
+calib13$theta # calibrated risk-neutral parameter when using MLSS_sapcetime
+calib11$error # in-sample pricing error when using Fourier
+calib12$error # in-sample pricing error when using adaptBW
+calib13$error # in-sample pricing error when using MLSS_sapcetime
+
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+station21 = 3
+start_ind21 = 1
+end_ind21 = 31
+type21 = "HDD"
+market_price2 = 650
+calib21 = calib(market_price2, residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2, Fourier)
+calib22 = calib(market_price2, residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2, adaptBW)
+calib23 = calib(market_price2, residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2, MLSS_spacetime)
+
+# examine results
+calib21$theta # calibrated risk-neutral parameter when using Fourier
+calib22$theta # calibrated risk-neutral parameter when using adaptBW
+calib23$theta # calibrated risk-neutral parameter when using MLSS_sapcetime
+calib21$error # in-sample pricing error when using Fourier
+calib22$error # in-sample pricing error when using adaptBW
+calib23$error # in-sample pricing error when using MLSS_sapcetime
 }

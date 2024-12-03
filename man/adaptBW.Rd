@@ -4,24 +4,26 @@
 \alias{adaptBW}
 \title{Pricing with adaptive bandwidth selection}
 \usage{
-adaptBW(residuals, station, start_ind, end_ind, type)
+adaptBW(residuals, station, start_ind, end_ind, type, seasonal_coefs)
 }
 \arguments{
 \item{residuals}{A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)}
 
-\item{station}{An numeric index denoting the specific station that the price of the temperature futures depends on}
+\item{station}{A numeric index denoting the specific station that the price of the temperature futures depends on}
 
-\item{start_ind}{An numeric index for the start of the measurement period}
+\item{start_ind}{A numeric index for the start of the measurement period}
 
-\item{end_ind}{An numeric index for the end of the measurement period}
+\item{end_ind}{A numeric index for the end of the measurement period}
 
 \item{type}{A string denoting the type of the temperature futures, either CDD, HDD or CAT}
+
+\item{seasonal_coefs}{A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced}
 }
 \value{
 A list containing:
-\item{price}{}
-\item{sresids}{}
-\item{plt}{}
+\item{price}{a scalar that is the price of the derivative computed}
+\item{sresids}{n by p matrix containing the standardized residuals computed}
+\item{plt}{plot of the empirical and fitted seasonal variances at the station priced}
 }
 \description{
 Function that returns the price of a temperature futures using the adaptive bandwidth selection
@@ -29,5 +31,49 @@ method to estimate seasonal volatility
 }
 \examples{
 # load the residuals data from residuals.rda in the data folder
-residuals = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+station11 = 1
+start_ind11 = 1
+end_ind11 = 31
+type11 = "HDD"
+adaptBW11 = adaptBW(residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1)
+station12 = 1
+start_ind12 = 182
+end_ind12 = 212
+type12 = "CDD"
+adaptBW12 = adaptBW(residuals1, station12, start_ind12, end_ind12, type12, seasonal_coefs1)
+
+# examine results
+adaptBW11$price # HDD price
+adaptBW12$price # CDD price
+head(adaptBW11$sresids) # standardised residuals
+head(adaptBW12$sresids) # standardised residuals
+adaptBW11$plt # plot
+adaptBW12$plt # plot
+
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+station21 = 3
+start_ind21 = 1
+end_ind21 = 31
+type21 = "HDD"
+adaptBW21 = adaptBW(residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2)
+station22 = 3
+start_ind22 = 182
+end_ind22 = 212
+type22 = "CAT"
+adaptBW22 = adaptBW(residuals2, station22, start_ind22, end_ind22, type22, seasonal_coefs2)
+
+# examine results
+adaptBW21$price # HDD price
+adaptBW22$price # CAT price
+head(adaptBW21$sresids) # standardised residuals
+head(adaptBW22$sresids) # standardised residuals
+adaptBW21$plt # plot
+adaptBW22$plt # plot
 }
