@@ -96,7 +96,7 @@ Rcpp::List calib_cpp(double market_price, const Rcpp::NumericMatrix& residuals, 
   // Manually compute the in-sample pricing error percentage
   double price_diff = price_t - market_price;
   double error_percent = (price_diff * price_diff) / (market_price * market_price) * 100;
-
+  double theta1 = market_price / price_t;
   // Return the result as a list
-  return Rcpp::List::create(Rcpp::Named("theta") = theta, Rcpp::Named("error") = error_percent);
+  return Rcpp::List::create(Rcpp::Named("theta") = theta1, Rcpp::Named("error") = error_percent);
 }
