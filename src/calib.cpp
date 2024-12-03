@@ -8,45 +8,45 @@
 //
 // [[Rcpp::depends(RcppArmadillo)]]
 
-// Objective function for optimization
+// Objective function for minimisation
 // [[Rcpp::export]]
 double obj_cpp(double theta, double market_price, const Rcpp::NumericMatrix& residuals, int station,
                int start_ind, int end_ind, const std::string& type, const Rcpp::NumericVector& seasonal_coefs,
                Rcpp::Function func) {
 
-  // Call the func (Fourier, adaptBW, MLSS_spacetime) function in Rcpp and get the price
+  // Call the function Fourier_c
   Rcpp::List price_data = func(residuals, station, start_ind, end_ind, type, seasonal_coefs);
   double price_t = Rcpp::as<double>(price_data["price"]);
 
-  // Manually compute squared difference between model price and market price
+  // compute squared difference between model price and market price
   double price_diff = price_t - market_price;
   return price_diff * price_diff; // (price_t - market_price)^2
 }
 
-// Gradient of the objective function (derivative of squared difference)
+// Gradient of the objective function
 double grad_obj_cpp(double theta, double market_price, const Rcpp::NumericMatrix& residuals, int station,
                     int start_ind, int end_ind, const std::string& type, const Rcpp::NumericVector& seasonal_coefs,
                     Rcpp::Function func) {
 
-  // Call the func (Fourier, adaptBW, MLSS_spacetime) function in Rcpp and get the price
+  // Call the function Fourier_c
   Rcpp::List price_data = func(residuals, station, start_ind, end_ind, type, seasonal_coefs);
   double price_t = Rcpp::as<double>(price_data["price"]);
 
-  // Compute the gradient (derivative of the objective function with respect to theta)
+  // compute the gradient
   double price_diff = price_t - market_price;
-  double gradient = 2 * price_diff; // Derivative of (price_t - market_price)^2 is 2 * (price_t - market_price)
+  double gradient = 2 * price_diff; // derivative of (price_t - market_price)^2 is 2 * (price_t - market_price)
 
   return gradient;
 }
 
-// Function to perform optimization using Gradient Descent with theta limits
+// Function to perform optimization using gradient descent
 // [[Rcpp::export]]
 Rcpp::List calib_cpp(double market_price, const Rcpp::NumericMatrix& residuals, int station, int start_ind,
                      int end_ind, const std::string& type, const Rcpp::NumericVector& seasonal_coefs,
                      Rcpp::Function func, double learning_rate = 0.1, int max_iter = 1000, double tol = 1e-6,
                      double theta_min = -50.0, double theta_max = 50.0) {
 
-  // Compatibility checks (similar to the R code)
+  // compatibility checks
   int n = residuals.nrow();
   int p = residuals.ncol();
   if (market_price <= 0) Rcpp::stop("market_price should be positive.");
@@ -58,22 +58,20 @@ Rcpp::List calib_cpp(double market_price, const Rcpp::NumericMatrix& residuals, 
   if (seasonal_coefs.size() != 4) Rcpp::stop("seasonal_coefs should be of length 4.");
   if (!(type == "CDD" || type == "HDD" || type == "CAT")) Rcpp::stop("Invalid type.");
 
-  // Initialize theta (starting point)
+  // Initialize theta
   double theta = 1.0;
   double prev_theta = 0.0;
   double gradient = 0.0;
 
-  // Gradient Descent Loop
+  // gradient descent Loop
   int iter = 0;
   while (iter < max_iter) {
-    // Compute the gradient of the objective function
+    // compute the gradient of the objective function
     gradient = grad_obj_cpp(theta, market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func);
 
-    // Update theta using the gradient descent rule: theta = theta - learning_rate * gradient
+    // update theta via gradient descent, where theta = theta - learning_rate * gradient
     prev_theta = theta;
     theta = theta - learning_rate * gradient;
-
-    // Ensure theta stays within the bounds of [-50, 50]
     if (theta < theta_min) {
       theta = theta_min;
     } else if (theta > theta_max) {
@@ -89,11 +87,11 @@ Rcpp::List calib_cpp(double market_price, const Rcpp::NumericMatrix& residuals, 
     iter++;
   }
 
-  // Now, compute the calibrated price and error using the optimized theta
+  // compute the calibrated price and error using the optimized theta
   Rcpp::List price_data = func(residuals, station, start_ind, end_ind, type, seasonal_coefs);
   double price_t = Rcpp::as<double>(price_data["price"]);
 
-  // Manually compute the in-sample pricing error percentage
+  // compute the in-sample pricing error as a percentage
   double price_diff = price_t - market_price;
   double error_percent = (price_diff * price_diff) / (market_price * market_price) * 100;
   double theta1 = market_price / price_t;
