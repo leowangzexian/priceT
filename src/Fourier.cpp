@@ -107,7 +107,7 @@ Rcpp::List Fourier_cpp(const Rcpp::NumericMatrix& residuals, int station, int st
   int n = residuals.nrow();
   int p = residuals.ncol();
 
-  // Compatibility checks
+  // compatibility checks
   if (n < 365 * 2) {
     Rcpp::stop("Need at least two years of data for residuals.");
   }
@@ -120,6 +120,8 @@ Rcpp::List Fourier_cpp(const Rcpp::NumericMatrix& residuals, int station, int st
   if (start_ind < 1 || start_ind > 365 || end_ind < 1 || end_ind > 365 || start_ind >= end_ind) {
     Rcpp::stop("Invalid start or end index.");
   }
+  if (seasonal_coefs.size() != 4) Rcpp::stop("seasonal_coefs should be of length 4.");
+  if (!(type == "CDD" || type == "HDD" || type == "CAT")) Rcpp::stop("Invalid type.");
 
   Rcpp::NumericMatrix resids = residuals;
 
