@@ -14,7 +14,6 @@
 #' @return A list containing:
 #'         \item{price}{a scalar that is the price of the derivative computed}
 #'         \item{sresids}{n by p matrix containing the standardized residuals computed}
-#'         \item{plt}{plot of the empirical and fitted seasonal variances at the station priced}
 #'
 #' @export
 #'
