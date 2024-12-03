@@ -62,6 +62,48 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// obj_cpp
+double obj_cpp(double theta, double market_price, const Rcpp::NumericMatrix& residuals, int station, int start_ind, int end_ind, const std::string& type, const Rcpp::NumericVector& seasonal_coefs, Rcpp::Function func);
+RcppExport SEXP _priceT_obj_cpp(SEXP thetaSEXP, SEXP market_priceSEXP, SEXP residualsSEXP, SEXP stationSEXP, SEXP start_indSEXP, SEXP end_indSEXP, SEXP typeSEXP, SEXP seasonal_coefsSEXP, SEXP funcSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type theta(thetaSEXP);
+    Rcpp::traits::input_parameter< double >::type market_price(market_priceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type residuals(residualsSEXP);
+    Rcpp::traits::input_parameter< int >::type station(stationSEXP);
+    Rcpp::traits::input_parameter< int >::type start_ind(start_indSEXP);
+    Rcpp::traits::input_parameter< int >::type end_ind(end_indSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type type(typeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type seasonal_coefs(seasonal_coefsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Function >::type func(funcSEXP);
+    rcpp_result_gen = Rcpp::wrap(obj_cpp(theta, market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func));
+    return rcpp_result_gen;
+END_RCPP
+}
+// calib_cpp
+Rcpp::List calib_cpp(double market_price, const Rcpp::NumericMatrix& residuals, int station, int start_ind, int end_ind, const std::string& type, const Rcpp::NumericVector& seasonal_coefs, Rcpp::Function func, double learning_rate, int max_iter, double tol, double theta_min, double theta_max);
+RcppExport SEXP _priceT_calib_cpp(SEXP market_priceSEXP, SEXP residualsSEXP, SEXP stationSEXP, SEXP start_indSEXP, SEXP end_indSEXP, SEXP typeSEXP, SEXP seasonal_coefsSEXP, SEXP funcSEXP, SEXP learning_rateSEXP, SEXP max_iterSEXP, SEXP tolSEXP, SEXP theta_minSEXP, SEXP theta_maxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type market_price(market_priceSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix& >::type residuals(residualsSEXP);
+    Rcpp::traits::input_parameter< int >::type station(stationSEXP);
+    Rcpp::traits::input_parameter< int >::type start_ind(start_indSEXP);
+    Rcpp::traits::input_parameter< int >::type end_ind(end_indSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type type(typeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type seasonal_coefs(seasonal_coefsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Function >::type func(funcSEXP);
+    Rcpp::traits::input_parameter< double >::type learning_rate(learning_rateSEXP);
+    Rcpp::traits::input_parameter< int >::type max_iter(max_iterSEXP);
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    Rcpp::traits::input_parameter< double >::type theta_min(theta_minSEXP);
+    Rcpp::traits::input_parameter< double >::type theta_max(theta_maxSEXP);
+    rcpp_result_gen = Rcpp::wrap(calib_cpp(market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func, learning_rate, max_iter, tol, theta_min, theta_max));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cos_approx
 double cos_approx(double x);
 RcppExport SEXP _priceT_cos_approx(SEXP xSEXP) {
@@ -116,6 +158,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_priceT_sigma_c", (DL_FUNC) &_priceT_sigma_c, 1},
     {"_priceT_create_sequence", (DL_FUNC) &_priceT_create_sequence, 2},
     {"_priceT_Fourier_cpp", (DL_FUNC) &_priceT_Fourier_cpp, 6},
+    {"_priceT_obj_cpp", (DL_FUNC) &_priceT_obj_cpp, 9},
+    {"_priceT_calib_cpp", (DL_FUNC) &_priceT_calib_cpp, 13},
     {"_priceT_cos_approx", (DL_FUNC) &_priceT_cos_approx, 1},
     {"_priceT_loc1temp_c", (DL_FUNC) &_priceT_loc1temp_c, 3},
     {"_priceT_loc1optim", (DL_FUNC) &_priceT_loc1optim, 3},

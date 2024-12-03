@@ -17,6 +17,14 @@ Fourier_cpp <- function(residuals, station, start_ind, end_ind, type, seasonal_c
     .Call(`_priceT_Fourier_cpp`, residuals, station, start_ind, end_ind, type, seasonal_coefs)
 }
 
+obj_cpp <- function(theta, market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func) {
+    .Call(`_priceT_obj_cpp`, theta, market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func)
+}
+
+calib_cpp <- function(market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func, learning_rate = 0.1, max_iter = 1000L, tol = 1e-6, theta_min = -50.0, theta_max = 50.0) {
+    .Call(`_priceT_calib_cpp`, market_price, residuals, station, start_ind, end_ind, type, seasonal_coefs, func, learning_rate, max_iter, tol, theta_min, theta_max)
+}
+
 cos_approx <- function(x) {
     .Call(`_priceT_cos_approx`, x)
 }
