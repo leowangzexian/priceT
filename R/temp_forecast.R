@@ -151,8 +151,8 @@ temp_forecast = function(residuals, station, seasonal_coefs, temp) {
   new_temps = seas + re_vec + re1[station] + qnorm(sig) * ghyp::rghyp(length(i_seq2)) # new temperatures simulated
   new_temps[new_temps < -10 | new_temps > 100] = NA # controls the minimum and maximum of the simulated temperatures
   new_temps = zoo::na.approx(new_temps, rule = 3) # interpolated values with outliers removed
-  lower_conf = new_temps - qnorm(sig) * re_vec # left endpoints of confidence intervals
-  upper_conf = new_temps + qnorm(sig) * re_vec # right endpoints of confidence intervals
+  lower_conf = new_temps - qnorm(sig) * abs(re_vec) # left endpoints of confidence intervals
+  upper_conf = new_temps + qnorm(sig) * abs(re_vec) # right endpoints of confidence intervals
   lower_conf[lower_conf < -10 | lower_conf > 100] = NA; lower_conf = zoo::na.approx(lower_conf, rule = 3)
   upper_conf[upper_conf < -10 | upper_conf > 100] = NA; upper_conf = zoo::na.approx(upper_conf, rule = 3)
   full_temps = c(temp, new_temps) # appending the new temperatures in the future to the list of past temperatures
