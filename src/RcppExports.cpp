@@ -36,13 +36,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // loc1optim
-Rcpp::NumericVector loc1optim(Rcpp::NumericVector initial, double* t, Rcpp::NumericVector loc1temperatures);
+Rcpp::NumericVector loc1optim(Rcpp::NumericVector initial, Rcpp::NumericVector t, Rcpp::NumericVector loc1temperatures);
 RcppExport SEXP _priceT_loc1optim(SEXP initialSEXP, SEXP tSEXP, SEXP loc1temperaturesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type initial(initialSEXP);
-    Rcpp::traits::input_parameter< double* >::type t(tSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type t(tSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type loc1temperatures(loc1temperaturesSEXP);
     rcpp_result_gen = Rcpp::wrap(loc1optim(initial, t, loc1temperatures));
     return rcpp_result_gen;

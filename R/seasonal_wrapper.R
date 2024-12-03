@@ -24,7 +24,6 @@
 #' # examine results
 #' c(seasonal1$a, seasonal1$b, seasonal1$c, seasonal1$d) # coefficients
 #' head(seasonal1$seasonality) # fitted values of the seasonal function
-#' seasonal1$plt # plot
 #'
 #' # example 2
 #' temp = as.numeric(temp0[, 50]) # historical temperatures at one station
@@ -33,7 +32,6 @@
 #' # examine results
 #' c(seasonal2$a, seasonal2$b, seasonal2$c, seasonal2$d) # coefficients
 #' head(seasonal2$seasonality) # fitted values of the seasonal function
-#' seasonal2$plt # plot
 seasonal_c = function(temp) {
   result = seasonal_cpp(temp)
   return(result)
