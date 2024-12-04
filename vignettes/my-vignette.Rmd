@@ -24,7 +24,7 @@ $$\text{CDD}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}\max(T_i-c,0),$$ $$\text{HDD
 where $T_i$ denotes the mean of the maximum and minimum temperatures on day $i$, and $\tau_1$ and $\tau_2$ denote the start and end dates of the measurement period respectively. The CDD over the measurement period is the accumulated temperatures above the threshold $c$, which is usually taken as $c=65^{\circ}\text{F}$, serving as an indicator of the need for cooling, whereas the HDD indicates the need for heating. For the stations in the US, CME mainly organizes trades for monthly temperature futures. CDD contracts are only traded for the summer season from April to October whereas HDD contracts are only traded for the winter season from October to April. Existing approaches on the pricing of temperature derivatives focus on the use of continuous-time ARMA (CARMA) processes and Brownian-driven Ornstein-Uhlenbeck (OU) dynamics with univariate seasonal volatility for modeling the deseasonalized temperatures at a particular site. In contrast with existing methods that focus on estimating univariate seasonal volatility and isolating Gaussian risk factors, we develop efficient pricing methods with analytical pricing formulae based on multivariate seasonal volatility, which can be modeled and estimated by three methods, truncated Fourier series, adaptive bandwidth selection and non-Gaussian spatio-temporal random fields describing the evolutions of the temperatures at different stations over time. 
 The package focuses on the calibration and computation of the futures prices as well as other relevant techniques such as temperature modeling and forecasting, and the design of hedging strategies for managing temperature risk.
 
-To begin exploring the package, install and load {packageT} in R:
+To begin exploring the package, install and load the package priceT in R:
 ```{r}
 library(priceT)
 ```
@@ -75,14 +75,9 @@ seasonal1 = seasonal(temp)
 # examine results
 c(seasonal1$a, seasonal1$b, seasonal1$c, seasonal1$d) # coefficients
 head(seasonal1$seasonality) # fitted values of the seasonal function
-
-# > c(seasonal1$a, seasonal1$b, seasonal1$c, seasonal1$d) # coefficients
-# [1]  6.524117e+01 -3.922853e-04 -1.708097e+01  1.755952e+01
-# > head(seasonal1$seasonality) # fitted values of the seasonal function
-# [1] 48.84910 48.76846 48.69269 48.62183 48.55589 48.49490
 ```
 
-For the second illustrative example, we study the temperatures data and seasonality function at Red Deer Regional Airport in Alberta.
+For the second illustrative example, we study the temperatures data and seasonality function at Kamloops Airport in British Columbia.
 ```{r}
 # example 2
 temp = as.numeric(temp0[, 50]) # historical temperatures at one station
@@ -91,11 +86,550 @@ seasonal2 = seasonal(temp)
 # examine results
 c(seasonal2$a, seasonal2$b, seasonal2$c, seasonal2$d) # coefficients
 head(seasonal2$seasonality) # fitted values of the seasonal function
+```
 
-# > c(seasonal2$a, seasonal2$b, seasonal2$c, seasonal2$d) # coefficients
-# [1]  4.800122e+01  6.943088e-04 -2.324373e+01  1.403588e+01
-# > head(seasonal2$seasonality) # fitted values of the seasonal function
-# [1] 25.34096 25.25598 25.17774 25.10627 25.04157 24.98369
+2. Fourier <br>
+The inputs are: <br>
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
+start_ind = A numeric index for the start of the measurement period <br>
+end_ind = A numeric index for the end of the measurement period <br>
+type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
+seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+The outputs are: <br>
+price = a scalar that is the price of the derivative computed <br>
+sresids = n by p matrix containing the standardized residuals computed <br>
+plt = plot of the empirical and fitted seasonal variances at the station priced <br>
+
+For the first illustrative example, we use the deseasonalized temperatures from three stations, Atlanta, Boston and Burbank, for multivariate modeling.  
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+station11 = 1
+start_ind11 = 1
+end_ind11 = 31
+type11 = "HDD"
+Fourier11 = Fourier(residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1)
+station12 = 1
+start_ind12 = 182
+end_ind12 = 212
+type12 = "CDD"
+Fourier12 = Fourier(residuals1, station12, start_ind12, end_ind12, type12, seasonal_coefs1)
+
+# examine results
+Fourier11$price # HDD price
+Fourier12$price # CDD price
+head(Fourier11$sresids) # standardised residuals
+head(Fourier12$sresids) # standardised residuals
+```
+
+From the outputs, we can see that the computed price of a January HDD futures based on Atlanta is $575.247$ and the computed price of a July CDD futures based on Atlanta is $631.0655$.  
+
+For the second illustrative example, we use the deseasonalized temperatures from five stations, Comox Airport in British Columbia, Langara in British Columbia, Grande Prairie Airport in Alberta, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia, for multivariate modeling.
+
+```{r}
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+station21 = 3
+start_ind21 = 1
+end_ind21 = 31
+type21 = "HDD"
+Fourier21 = Fourier(residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2)
+station22 = 3
+start_ind22 = 182
+end_ind22 = 212
+type22 = "CAT"
+Fourier22 = Fourier(residuals2, station22, start_ind22, end_ind22, type22, seasonal_coefs2)
+
+# examine results
+Fourier21$price # HDD price
+Fourier22$price # CAT price
+head(Fourier21$sresids) # standardised residuals
+head(Fourier22$sresids) # standardised residuals
+```
+
+From the outputs, we can see that the computed price of a January HDD futures based on Grande Prairie Airport in Alberta is $1752.806$ and the computed price of a July CAT futures based on Grande Prairie Airport in Alberta is $1993.411$.  
+
+3. adaptBW <br>
+The inputs are: <br>
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
+start_ind = A numeric index for the start of the measurement period <br>
+end_ind = A numeric index for the end of the measurement period <br>
+type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
+seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+The outputs are: <br>
+price = a scalar that is the price of the derivative computed <br>
+sresids = n by p matrix containing the standardized residuals computed <br>
+plt = plot of the empirical and fitted seasonal variances at the station priced <br>
+
+For the first illustrative example, we use the deseasonalized temperatures from three stations, Atlanta, Boston and Burbank, for multivariate modeling.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+station11 = 1
+start_ind11 = 1
+end_ind11 = 31
+type11 = "HDD"
+adaptBW11 = adaptBW(residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1)
+station12 = 1
+start_ind12 = 182
+end_ind12 = 212
+type12 = "CDD"
+adaptBW12 = adaptBW(residuals1, station12, start_ind12, end_ind12, type12, seasonal_coefs1)
+
+# examine results
+adaptBW11$price # HDD price
+adaptBW12$price # CDD price
+head(adaptBW11$sresids) # standardised residuals
+head(adaptBW12$sresids) # standardised residuals
+```
+
+From the outputs, we can see that the computed price of a January HDD futures based on Atlanta is $866.9785$ and the computed price of a July CDD futures based on Atlanta is $599.5172$.  
+
+For the second illustrative example, we use the deseasonalized temperatures from five stations, Comox Airport in British Columbia, Langara in British Columbia, Grande Prairie Airport in Alberta, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia, for multivariate modeling.
+
+```{r}
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+station21 = 3
+start_ind21 = 1
+end_ind21 = 31
+type21 = "HDD"
+adaptBW21 = adaptBW(residuals2, station21, start_ind21, end_ind21, type21, seasonal_coefs2)
+station22 = 3
+start_ind22 = 182
+end_ind22 = 212
+type22 = "CAT"
+adaptBW22 = adaptBW(residuals2, station22, start_ind22, end_ind22, type22, seasonal_coefs2)
+
+# examine results
+adaptBW21$price # HDD price
+adaptBW22$price # CAT price
+head(adaptBW21$sresids) # standardised residuals
+head(adaptBW22$sresids) # standardised residuals
+```
+
+From the outputs, we can see that the computed price of a January HDD futures based on Grande Prairie Airport in Alberta is $1727.344$ and the computed price of a July CAT futures based on Grande Prairie Airport in Alberta is $1993.516$.  
+
+4. MLSS_spacetime <br>
+The inputs are: <br> 
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
+start_ind = A numeric index for the start of the measurement period <br>
+end_ind = A numeric index for the end of the measurement period <br>
+type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
+seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+The outputs are: <br>
+price = a scalar that is the price of the derivative computed <br> 
+mu = 1 by p vector containing the parameter mu of the fitted NIG distribution for the standardized residuals <br>
+
+For the first illustrative example, we use the deseasonalized temperatures from three stations, Atlanta, Boston and Burbank, for multivariate modeling.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+station11 = 1
+start_ind11 = 1
+end_ind11 = 31
+type11 = "HDD"
+MLSS_spacetime11 = MLSS_spacetime(residuals1, station11, start_ind11,
+                                  end_ind11, type11, seasonal_coefs1)
+station12 = 1
+start_ind12 = 182
+end_ind12 = 212
+type12 = "CDD"
+MLSS_spacetime12 = MLSS_spacetime(residuals1, station12, start_ind12,
+                                  end_ind12, type12, seasonal_coefs1)
+
+# examine results
+MLSS_spacetime11$price # HDD price
+MLSS_spacetime12$price # CDD price
+MLSS_spacetime11$mu # parameter mu of NIG random field
+MLSS_spacetime12$mu # parameter mu of NIG random field
+```
+
+From the outputs, we can see that the computed price of a January HDD futures based on Atlanta is $573.9523$ and the computed price of a July CDD futures based on Atlanta is $581.2839$. 
+
+For the second illustrative example, we use the deseasonalized temperatures from five stations, Comox Airport in British Columbia, Langara in British Columbia, Grande Prairie Airport in Alberta, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia, for multivariate modeling.
+
+```{r}
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+station21 = 3
+start_ind21 = 1
+end_ind21 = 31
+type21 = "HDD"
+MLSS_spacetime21 = MLSS_spacetime(residuals2, station21, start_ind21,
+                                  end_ind21, type21, seasonal_coefs2)
+station22 = 3
+start_ind22 = 182
+end_ind22 = 212
+type22 = "CAT"
+MLSS_spacetime22 = MLSS_spacetime(residuals2, station22, start_ind22,
+                                  end_ind22, type22, seasonal_coefs2)
+
+# examine results
+MLSS_spacetime21$price # HDD price
+MLSS_spacetime22$price # CAT price
+MLSS_spacetime21$mu # parameter mu of NIG random field
+MLSS_spacetime22$mu # parameter mu of NIG random field
+```
+
+From the outputs, we can see that the computed price of a January HDD futures based on Grande Prairie Airport in Alberta is $1747.575$ and the computed price of a July CAT futures based on Grande Prairie Airport in Alberta is $1998.542$. 
+
+5. calib <br>
+The inputs are: <br>
+market_price = A scalar that is the actual futures prices traded in the market <br>  
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
+start_ind = A numeric index for the start of the measurement period <br> 
+end_ind = A numeric index for the end of the measurement period <br>
+type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
+seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+func = A function to compute the futures price, either Fourier, adaptBW or MLSS_spacetime <br>
+The outputs are: <br>
+theta = a scalar that is the calibrated risk-neutral parameter <br> 
+error = a scalar that is the in-sample pricing error <br>
+
+Previously, we have computed the prices of July CDD futures based on Atlanta. Now, suppose we know that the price of July CDD futures traded in the market is $600$. We can then calibrate the risk-neutral parameter.  
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+station11 = 1
+start_ind11 = 182
+end_ind11 = 212
+type11 = "CDD"
+market_price1 = 600
+calib11 = calib(market_price1, residuals1, station11, start_ind11,
+                end_ind11, type11, seasonal_coefs1, Fourier)
+calib12 = calib(market_price1, residuals1, station11, start_ind11,
+                end_ind11, type11, seasonal_coefs1, adaptBW)
+calib13 = calib(market_price1, residuals1, station11, start_ind11,
+                end_ind11, type11, seasonal_coefs1, MLSS_spacetime)
+
+# examine results
+calib11$theta # calibrated risk-neutral parameter when using Fourier
+calib12$theta # calibrated risk-neutral parameter when using adaptBW
+calib13$theta # calibrated risk-neutral parameter when using MLSS_sapcetime
+calib11$error # in-sample pricing error when using Fourier
+calib12$error # in-sample pricing error when using adaptBW
+calib13$error # in-sample pricing error when using MLSS_sapcetime
+```
+
+From the results, we can see that the risk-neutral parameter calibrated is $0.9507729$ when using the truncated Fourier series method to estimate seasonal volatility with in-sample pricing error of $0$, the risk-neutral parameter calibrated is $1.000805$ when using the adaptive bandwidth method to estimate seasonal volatility with in-sample pricing error of $0$, and the risk-neutral parameter calibrated is $1.032198$ when using non-Gaussian spatio-temporal random fields to estimate seasonal volatility with in-sample pricing error of close to $0$.  
+
+Previously, we have also computed the prices of January HDD futures based on Grande Prairie Airport in Alberta. Now, suppose we know that the price of January HDD futures traded in the market is $650$. We can then calibrate the risk-neutral parameter.  
+
+```{r}
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+station21 = 3
+start_ind21 = 1
+end_ind21 = 31
+type21 = "HDD"
+market_price2 = 650
+calib21 = calib(market_price2, residuals2, station21, start_ind21,
+                end_ind21, type21, seasonal_coefs2, Fourier)
+calib22 = calib(market_price2, residuals2, station21, start_ind21,
+                end_ind21, type21, seasonal_coefs2, adaptBW)
+calib23 = calib(market_price2, residuals2, station21, start_ind21,
+                end_ind21, type21, seasonal_coefs2, MLSS_spacetime)
+
+# examine results
+calib21$theta # calibrated risk-neutral parameter when using Fourier
+calib22$theta # calibrated risk-neutral parameter when using adaptBW
+calib23$theta # calibrated risk-neutral parameter when using MLSS_sapcetime
+calib21$error # in-sample pricing error when using Fourier
+calib22$error # in-sample pricing error when using adaptBW
+calib23$error # in-sample pricing error when using MLSS_sapcetime
+```
+
+From the results, we can see that the risk-neutral parameter calibrated is $0.370834$ when using the truncated Fourier series method to estimate seasonal volatility with in-sample pricing error of $0$, the risk-neutral parameter calibrated is $0.3763002$ when using the adaptive bandwidth method to estimate seasonal volatility with in-sample pricing error of $0$, and the risk-neutral parameter calibrated is $0.3719441$ when using non-Gaussian spatio-temporal random fields to estimate seasonal volatility with in-sample pricing error of $0$.  
+
+6. diagnostics <br>
+The input is: <br>
+resid = A n by 1 vector containing the past deseasonalized temperatures data at one station over (n / 365) years <br>
+The outputs are: <br>
+teststat = a scalar that is the test statistic from the Kolmogorov-Smirnov normality test <br>
+pvalue = a scalar that is the p-value from the Kolmogorov-Smirnov normality test <br>
+plt1 = QQ plot against normal distribution <br>
+plt2 = QQ plot against generalised hyperbolic distribution <br>
+plt3 = a plot for the kernel density estimate <br>
+
+For the first illustrative example, we analyse the deseasonalized temperatures from Atlanta.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+
+# example 1
+resid = as.numeric(residuals[, 3]) # deseasonalized temperaures at one station
+diag1 = diagnostics(resid)
+
+# examine results
+diag1$teststat # test statistic from the Kolmogorov-Smirnov normality test
+diag1$pvalue # p-value from the Kolmogorov-Smirnov normality test
+# smaller p-value, especially close to 0, indicates rejection of the normality 
+# assumption
+```
+
+Based on the tests and plots, we can clearly see that it is not appropriate to claim that the distribution of the deseasonalized temperatures at Atlanta is Gaussian. 
+
+For the second illustrative example, we analyse the deseasonalized temperatures from Grande Prairie Airport in Alberta.
+
+```{r}
+# example 2
+resid = as.numeric(residuals[, 53]) # deseasonalized temperaures at one station
+diag2 = diagnostics(resid)
+
+# examine results
+diag2$teststat # test statistic from the Kolmogorov-Smirnov normality test
+diag2$pvalue # p-value from the Kolmogorov-Smirnov normality test
+# smaller p-value, especially close to 0, indicates rejection of the normality
+# assumption
+```
+
+Based on the tests and plots, we can clearly see that it is not appropriate to claim that the distribution of the deseasonalized temperatures at Grande Prairie Airport in Alberta is Gaussian. 
+
+The results suggest that multivariate non-Gaussian models should be used to describe the behaviour and evolutions of the deseasonalized temperatures. 
+
+7. temp_forecast <br>
+The inputs are: <br>
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station where forecasts are based on <br>
+seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station considered <br>
+temp = A m by 1 vector containing the past temperatures data at one station over (n / 365) years <br>
+The outputs are: <br>
+point = a 1 by 365 vector containing the forecasted temperatures for the next year <br>
+lower = a 1 by 365 vector containing the left endpoints of the confidence intervals for the forecasted temperatures <br>
+upper = a 1 by 365 vector containing the right endpoints of the confidence intervals for the forecasted temperatures <br>
+newtemps = a 1 by (m + 365) vector containing the past and future temperatures at that particular station <br>
+
+For the first illustrative example, we use the deseasonalized temperatures from three stations, Atlanta, Boston and Burbank, for multivariate modeling.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+# load the temp0 data from temp0.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
+temp = as.numeric(temp0[, 3]) # historical temperatures at one station
+station11 = 1
+temp_f1 = temp_forecast(residuals1, station11, seasonal_coefs1, temp)
+
+# examine results
+temp_f1$point # point estimates
+temp_f1$lower # left endpoints of confidence intervals
+temp_f1$upper # right endpoints of confidence intervals
+temp_f1$newtemps # past plus futures forecasted temperatures
+length(temp_f1$newtemps) # 365 * 6 = 2190
+```
+
+The results demonstrate the forecasted temperatures at Atlanta for the next year. 
+
+For the second illustrative example, we use the deseasonalized temperatures from five stations, Comox Airport in British Columbia, Langara in British Columbia, Grande Prairie Airport in Alberta, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia, for multivariate modeling.
+
+```{r}
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+seasonal_coefs2 = as.numeric(seasonal_coefs[51, 2:5])
+temp = as.numeric(temp0[, 53]) # historical temperatures at one station
+station21 = 3
+temp_f2 = temp_forecast(residuals2, station21, seasonal_coefs2, temp)
+
+# examine results
+temp_f2$point # point estimates
+temp_f2$lower # left endpoints of confidence intervals
+temp_f2$upper # right endpoints of confidence intervals
+temp_f2$newtemps # past plus futures forecasted temperatures
+length(temp_f2$newtemps) # 365 * 6 = 2190
+```
+
+The results demonstrate the forecasted temperatures at Grande Prairie Airport in Alberta for the next year.
+
+These enable us to analyse the temperature forecasts in terms of their point estimates, which reflect accuracy, and confidence intervals, which reflect precision. Continuous-time time series modeling has the ability of providing long-horizon density forecasts. Together with multivariate spatio-temporal models, our forecasts should be as accurate as weather forecasts in terms of point estimates but we are also able to provide accurate longer-horizon forecasts accounting for the distribution of the temperatures and the spatial interactions amongst different locations. 
+
+8. temp_hedge <br>
+The inputs are: <br>
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station to be considered <br>
+The output is: <br>
+vol = A 1 by 334 vector containing the volatilities of CAT futures prices on each day in the next year <br>
+
+Similar to previous functions, for the first illustrative example we use the deseasonalized temperatures from three stations, Atlanta, Boston and Burbank, for multivariate modeling.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+station1 = 1
+temp_hedge1 = temp_hedge(residuals1, station1)
+
+# examine results
+temp_hedge1$vol # volatilities of CAT futures prices
+```
+
+The outputs are the volatilities of the CAT futures prices based on Atlanta over the course of a year from Jan to Nov. 
+
+Similar to previous functions, for the second illustrative example, we use the deseasonalized temperatures from five stations, Comox Airport in British Columbia, Langara in British Columbia, Grande Prairie Airport in Alberta, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia, for multivariate modeling.
+
+```{r}
+# example 2
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+station2 = 3
+temp_hedge2 = temp_hedge(residuals2, station2)
+
+# examine results
+temp_hedge2$vol # volatilities of CAT futures prices
+```
+
+The outputs are the volatilities of the CAT futures prices based on Grande Prairie Airport in Alberta over the course of a year from Jan to Nov.
+
+The volatility of CAT futures prices is equivalent to the hedge ratio, which is the number of CAT futures contracts needed in order to create a perfect hedge for the temperature risk at that particular location to avoid any losses due to atypical weather conditions. Based on our analytical pricing formulae, we were able to derive the stochastic differential equations (SDEs) of the futures prices, giving rise to the hedge ratios, which are dynamic and time-varying. The behaviour of the hedge ratios demonstrate the Samuelson effect, that is, the volatility of futures prices decreases as we approach the start of the measurement period. 
+
+9. loc_hedge <br>
+The inputs are: <br>
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station to be considered <br>
+The output is: <br>
+optim_weights = A 1 by (p - 1) vector containing the optimal weights for each station in the portfolio <br>
+
+For the function temp_hedge, we consider minimizing the temperature risk at a particular location using the temperature futures based on that location. Now, we consider minimizing the temperature risk at a particular location using the temperature futures based on other locations. 
+
+For the first illustrative example, we use the deseasonalized temperatures from three stations, Atlanta, Boston and Burbank, for multivariate modeling.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
+station1 = 1
+loc_hedge1 = loc_hedge(residuals1, station1)
+
+# examine results
+loc_hedge1$optim_weights 
+# weights for each of the other stations in the optimal portfolio
+
+sum(loc_hedge1$optim_weights) # sum to one
+```
+
+The results indicate the weights that need to be assigned to the temperature  futures based on Boston and Burbank in order to form a portfolio to hedge the temperature risk at Atlanta. A positive weight indicates long position whereas a negative weight indicates short position. 
+
+For the second illustrative example, we use the deseasonalized temperatures from five stations, Comox Airport in British Columbia, Langara in British Columbia, Grande Prairie Airport in Alberta, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia, for multivariate modeling.
+
+```{r}
+residuals2 = matrix(as.numeric(residuals[, 51:55]), 730, 5)
+station2 = 3
+loc_hedge2 = loc_hedge(residuals2, station2)
+
+# examine results
+loc_hedge2$optim_weights 
+# weights for each of the other stations in the optimal portfolio
+
+sum(loc_hedge2$optim_weights) # sum to one
+```
+
+The results indicate the weights that need to be assigned to the temperature  futures based on Comox Airport in British Columbia, Langara in British Columbia, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia in order to form a portfolio to hedge the temperature risk at Grande Prairie Airport in Alberta. A positive weight indicates long position whereas a negative weight indicates short position. 
+
+11. Fourier_c <br>
+The inputs are: <br>
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
+start_ind = A numeric index for the start of the measurement period <br>
+end_ind = A numeric index for the end of the measurement period <br>
+type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
+seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+The outputs are: <br>
+price = a scalar that is the price of the derivative computed <br>
+sresids = n by p matrix containing the standardized residuals computed <br>
+
+For the illustrative example, we use the deseasonalized temperatures from four stations, Cincinnati, Dallas, Houston and Las Vegas, for multivariate modeling and compute the prices of January HDD futures based on Houston and July CDD futures based on Houston.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 7:10]), 730, 4)
+seasonal_coefs1 = as.numeric(seasonal_coefs[7, 2:5])
+station11 = 2
+start_ind11 = 1
+end_ind11 = 31
+type11 = "HDD"
+Fourier11 = Fourier_c(residuals1, station11, start_ind11, end_ind11, type11, seasonal_coefs1)
+station12 = 2
+start_ind12 = 182
+end_ind12 = 212
+type12 = "CDD"
+Fourier12 = Fourier_c(residuals1, station12, start_ind12, end_ind12, type12, seasonal_coefs1)
+
+# examine results
+Fourier11$price # HDD price
+Fourier12$price # CDD price
+head(Fourier11$sresids) # standardised residuals
+head(Fourier12$sresids) # standardised residuals
+```
+
+12. calib_c <br>
+The inputs are: <br>
+market_price = A scalar that is the actual futures prices traded in the market <br>  
+residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
+station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
+start_ind = A numeric index for the start of the measurement period <br> 
+end_ind = A numeric index for the end of the measurement period <br>
+type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
+seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+func = A function to compute the futures price, either Fourier, adaptBW or MLSS_spacetime <br>
+The outputs are: <br>
+theta = a scalar that is the calibrated risk-neutral parameter <br> 
+error = a scalar that is the in-sample pricing error <br>
+
+For the illustrative example, we use the deseasonalized temperatures from four stations, Cincinnati, Dallas, Houston and Las Vegas, for multivariate modeling and calibrate the risk-neutral parameter based on the computed price of July CDD futures on Houston and its corresponding market price.
+
+```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
+residuals1 = matrix(as.numeric(residuals[, 7:10]), 730, 4)
+seasonal_coefs1 = as.numeric(seasonal_coefs[7, 2:5])
+station11 = 2
+start_ind11 = 182
+end_ind11 = 212
+type11 = "CDD"
+market_price1 = 2650
+calib11 = calib_c(market_price1, residuals1, station11, start_ind11,
+                  end_ind11, type11, seasonal_coefs1, Fourier_c)
+
+# examine results
+calib11$theta # calibrated risk-neutral parameter when using Fourier
+calib11$error # in-sample pricing error when using Fourier
 ```
 
 ## References
