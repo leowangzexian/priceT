@@ -7,7 +7,7 @@
 #' @param residuals A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)
 #' @param station A numeric index denoting the specific station where forecasts are based on
 #' @param seasonal_coefs A 1 by 4 vector containing the coefficients of the seasonality function at the station considered
-#' @param temp A m by 1 vector containing the past temperatures data at one station over (n / 365) years
+#' @param temp A m by 1 vector containing the past temperatures data at one station over (m / 365) years
 #'
 #' @return A list containing:
 #'         \item{point}{a 1 by 365 vector containing the forecasted temperatures for the next year}

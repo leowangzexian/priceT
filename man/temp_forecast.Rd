@@ -13,7 +13,7 @@ temp_forecast(residuals, station, seasonal_coefs, temp)
 
 \item{seasonal_coefs}{A 1 by 4 vector containing the coefficients of the seasonality function at the station considered}
 
-\item{temp}{A m by 1 vector containing the past temperatures data at one station over (n / 365) years}
+\item{temp}{A m by 1 vector containing the past temperatures data at one station over (m / 365) years}
 }
 \value{
 A list containing:
