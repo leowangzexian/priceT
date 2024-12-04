@@ -2,7 +2,7 @@
 
 **Introduction:**
 Temperature derivatives are financial contracts whose payoffs depend on the temperatures at specific stations over certain periods of time. Currently, there are three main types of temperature derivatives, comprising Cooling Degree Days (CDD), Heating Degree Days (HDD) and Cumulative Average Temperature (CAT) futures contracts, traded at the Chicago Mercantile Exchange (CME) and a total of $13$ measuring stations in the United States. The three temperature indices are defined as follow: 
-$$\text{CDD}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}\max(T_i-c,0)$$, $$\text{HDD}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}\max(c-T_i,0)$$, and $$\text{CAT}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}T_i,$$
+$$\text{CDD}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}\max(T_i-c,0)$$, $$\text{HDD}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}\max(c-T_i,0)$$, and $$\text{CAT}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}T_i$$, 
 where $T_i$ denotes the mean of the maximum and minimum temperatures on day $i$, and $\tau_1$ and $\tau_2$ denote the start and end dates of the measurement period respectively. The CDD over the measurement period is the accumulated temperatures above the threshold $c$, which is usually taken as $c=65^{\circ}\text{F}$, serving as an indicator of the need for cooling, whereas the HDD indicates the need for heating. For the stations in the US, CME mainly organizes trades for monthly temperature futures. CDD contracts are only traded for the summer season from April to October whereas HDD contracts are only traded for the winter season from October to April. Existing approaches on the pricing of temperature derivatives focus on the use of continuous-time ARMA (CARMA) processes and Brownian-driven Ornstein-Uhlenbeck (OU) dynamics with univariate seasonal volatility for modeling the deseasonalized temperatures at a particular site. In contrast with existing methods that focus on estimating univariate seasonal volatility and isolating Gaussian risk factors, we develop efficient pricing methods with analytical pricing formulae based on multivariate seasonal volatility, which can be modeled and estimated by three methods, truncated Fourier series, adaptive bandwidth selection and non-Gaussian spatio-temporal random fields describing the evolutions of the temperatures at different stations over time. 
 The package focuses on the calibration and computation of the futures prices as well as other relevant techniques such as temperature modeling and forecasting, and the design of hedging strategies for managing temperature risk.
 
@@ -28,9 +28,39 @@ In addition, five datasets are provided:
 4. residuals: containing the daily deseasonalized temperatures of the 225 stations from 2020 to 2021.
 5. sresids: containing the daily standardized residuals of the 225 stations from 2020 to 2021 after fitting vector AR models to the deseasonalized temperatures.
 
+Vignette and testing directory with code coverage are also provided. 
+
 **Installation instructions:**
 The package priceT can be installed from GitHub directly. To install the package, run `devtools::install_github("leowangzexian/priceT")` in R. 
 To install the package with the vignette, run `devtools::install_github("leowangzexian/priceT", build_vignette = TRUE)` in R.
 
 **Examples:**
+We demonstrate the detailed usage of some functions with relevant examples. 
 
+1. seasonal:
+The inputs is: 
+temp = A n by 1 vector containing the past temperatures data at one station over (n / 365) years
+The outputs are:
+a = a scalar that is the value of the coefficient a in the seasonal function
+b = a scalar that is the value of the coefficient b in the seasonal function
+c = a scalar that is the value of the coefficient c in the seasonal function
+d = a scalar that is the value of the coefficient d in the seasonal function
+seasonality = n by 1 vector containing the values of the seasonal function
+plt = plot of the temperatures and the seasonal function over the time indices
+
+For the illustrative example, we study the temperatures data and seasonality function of Atlanta.
+```{r}
+# load the temp0 data from temp0.rda in the data folder
+# example 1
+temp = as.numeric(temp0[, 3]) # historical temperatures at one station
+seasonal1 = seasonal(temp)
+
+# examine results
+c(seasonal1$a, seasonal1$b, seasonal1$c, seasonal1$d) # coefficients
+head(seasonal1$seasonality) # fitted values of the seasonal function
+
+# > c(seasonal1$a, seasonal1$b, seasonal1$c, seasonal1$d) # coefficients
+# [1]  6.524117e+01 -3.922853e-04 -1.708097e+01  1.755952e+01
+# > head(seasonal1$seasonality) # fitted values of the seasonal function
+# [1] 48.84910 48.76846 48.69269 48.62183 48.55589 48.49490
+```
