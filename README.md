@@ -142,6 +142,10 @@ mu = 1 by p vector containing the parameter mu of the fitted NIG distribution fo
 
 For the illustrative example, we use the deseasonalized temperatures from three stations, Atlanta, Boston and Burbank, for multivariate modeling.
 ```{r}
+# load the residuals data from residuals.rda in the data folder
+# load the seasonal coefficients data from seasonal_coefs.rda in the data folder
+
+# example 1
 residuals1 = matrix(as.numeric(residuals[, 3:5]), 730, 3)
 seasonal_coefs1 = as.numeric(seasonal_coefs[1, 2:5])
 station11 = 1
