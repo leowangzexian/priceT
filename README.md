@@ -37,16 +37,16 @@ To install the package with the vignette, run `devtools::install_github("leowang
 **Examples:**
 We demonstrate the detailed usage of some functions with relevant examples. 
 
-1. seasonal:
-The inputs is: 
- * temp = A n by 1 vector containing the past temperatures data at one station over (n / 365) years
-The outputs are:
- * a = a scalar that is the value of the coefficient a in the seasonal function
- * b = a scalar that is the value of the coefficient b in the seasonal function
- * c = a scalar that is the value of the coefficient c in the seasonal function
- * d = a scalar that is the value of the coefficient d in the seasonal function
- * seasonality = n by 1 vector containing the values of the seasonal function
- * plt = plot of the temperatures and the seasonal function over the time indices
+1. seasonal:  
+The inputs is:  
+temp = A n by 1 vector containing the past temperatures data at one station over (n / 365) years  
+The outputs are:  
+a = a scalar that is the value of the coefficient a in the seasonal function  
+b = a scalar that is the value of the coefficient b in the seasonal function  
+c = a scalar that is the value of the coefficient c in the seasonal function  
+d = a scalar that is the value of the coefficient d in the seasonal function  
+seasonality = n by 1 vector containing the values of the seasonal function  
+plt = plot of the temperatures and the seasonal function over the time indices  
 
 For the illustrative example, we study the temperatures data and seasonality function of Atlanta.
 ```{r}
