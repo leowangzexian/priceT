@@ -13,7 +13,7 @@ The main purpose of the package is to compute the price of a temperature futures
 3. adaptBW: returns the price of a temperature futures using the adaptive bandwidth method. 
 4. MLSS_spacetime: returns the price of a temperature futures using multivariate non-Gaussian spatio-temporal models. 
 5. calib: returns the calibrated risk-neutral parameters and in-sample pricing errors based on the market prices. 
-6. diagnostics: for simple preliminary tests on the temperatures data, returns the test statistic and $p$-value from the Kolmogorov-Smirnov normality test, and visual outputs including the Q-Q plot against normal distribution, Q-Q plot against the generalised hyperbolic distribution and the kernel density estimate. 
+6. diagnostics: for simple preliminary tests on the deseasonalized temperatures data, returns the test statistic and $p$-value from the Kolmogorov-Smirnov normality test, and visual outputs including the Q-Q plot against normal distribution, Q-Q plot against the generalised hyperbolic distribution and the kernel density estimate. 
 7. temp_forecast: forecasting the temperatures in the future after fitting the historical data to the spatio-temporal models, both point forecasts and confidence intervals are returned. 
 8. temp_hedge: computes the hedge ratio, which is the number of contracts needed in order to create a perfect hedge for the temperature risk at a particular station over a specified measurement period. 
 9. loc_hedge: creates an optimal portfolio for hedging the temperature risk at a new location using the contracts traded based on other locations and returns the optimal weights. 
