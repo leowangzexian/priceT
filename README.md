@@ -237,6 +237,6 @@ calib13$error # in-sample pricing error when using MLSS_sapcetime
 # [1] 9.701277e-12
 ```
 
-From the results, we can see that the risk-neutral parameter calibrated is $0.9507729$ when using the truncated Fourier series method to estimate seasonal volatility with in-sample pricing error of $0\%$ and the risk-neutral parameter calibrated is $1.032198$ when using non-Gaussian spatio-temporal random fields to estimate seasonal volatility with in-sample pricing error of close to $0\%$.  
+From the results, we can see that the risk-neutral parameter calibrated is $0.9507729$ when using the truncated Fourier series method to estimate seasonal volatility with in-sample pricing error of $0%$ and the risk-neutral parameter calibrated is $1.032198$ when using non-Gaussian spatio-temporal random fields to estimate seasonal volatility with in-sample pricing error of close to $0%$.  
 
 For a wider variety of illustrative examples including visual outputs and the details regarding other functions in the package, you may refer to the vignette provided.  
