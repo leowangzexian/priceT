@@ -30,40 +30,40 @@ library(priceT)
 ```
 
 ## Functionality
-Let us first go through an overview of the basic purposes of each of the functions provided in the package. The main purpose of the package is to compute the price of a temperature futures using different methods based on the station (location), measurement period (time), which will be a particular month, and the type of contract (CDD, HDD or CAT) inputted. In the package priceT, the following functions are implemented: 
-1. seasonal: returns the estimated coefficients of the seasonality function. 
-2. Fourier: returns the price of a temperature futures using the truncated Fourier series method. 
-3. adaptBW: returns the price of a temperature futures using the adaptive bandwidth method. 
-4. MLSS_spacetime: returns the price of a temperature futures using multivariate non-Gaussian spatio-temporal models. 
-5. calib: returns the calibrated risk-neutral parameters and in-sample pricing errors based on the market prices. 
-6. diagnostics: for simple preliminary tests on the deseasonalized temperatures data, returns the test statistic and $p$-value from the Kolmogorov-Smirnov normality test, and visual outputs including the Q-Q plot against normal distribution, Q-Q plot against the generalised hyperbolic distribution and the kernel density estimate. 
-7. temp_forecast: forecasting the temperatures in the future after fitting the historical data to the spatio-temporal models, both point forecasts and confidence intervals are returned. 
-8. temp_hedge: computes the hedge ratio, which is the number of contracts needed in order to create a perfect hedge for the temperature risk at a particular station over a specified measurement period. 
-9. loc_hedge: creates an optimal portfolio for hedging the temperature risk at a new location using the contracts traded based on other locations and returns the optimal weights. 
-10. seasonal_c: returns the estimated coefficients of the seasonality function using C++.
-11. Fourier_c: returns the price of a temperature futures using the truncated Fourier series method via C++.
-12. calib_c: returns the calibrated risk-neutral parameters and in-sample pricing errors based on the market prices using C++.
+Let us first go through an overview of the basic purposes of each of the functions provided in the package. The main purpose of the package is to compute the price of a temperature futures using different methods based on the station (location), measurement period (time), which will be a particular month, and the type of contract (CDD, HDD or CAT) inputted. In the package priceT, the following functions are implemented: <br>
+1. seasonal: returns the estimated coefficients of the seasonality function. <br>
+2. Fourier: returns the price of a temperature futures using the truncated Fourier series method. <br>
+3. adaptBW: returns the price of a temperature futures using the adaptive bandwidth method. <br>
+4. MLSS_spacetime: returns the price of a temperature futures using multivariate non-Gaussian spatio-temporal models. <br>
+5. calib: returns the calibrated risk-neutral parameters and in-sample pricing errors based on the market prices. <br>
+6. diagnostics: for simple preliminary tests on the deseasonalized temperatures data, returns the test statistic and $p$-value from the Kolmogorov-Smirnov normality test, and visual outputs including the Q-Q plot against normal distribution, Q-Q plot against the generalised hyperbolic distribution and the kernel density estimate. <br>
+7. temp_forecast: forecasting the temperatures in the future after fitting the historical data to the spatio-temporal models, both point forecasts and confidence intervals are returned. <br>
+8. temp_hedge: computes the hedge ratio, which is the number of contracts needed in order to create a perfect hedge for the temperature risk at a particular station over a specified measurement period. <br>
+9. loc_hedge: creates an optimal portfolio for hedging the temperature risk at a new location using the contracts traded based on other locations and returns the optimal weights. <br>
+10. seasonal_c: returns the estimated coefficients of the seasonality function using C++. <br>
+11. Fourier_c: returns the price of a temperature futures using the truncated Fourier series method via C++. <br>
+12. calib_c: returns the calibrated risk-neutral parameters and in-sample pricing errors based on the market prices using C++. <br>
 
-In addition, five datasets are provided:
-1. tempstations: containing the information of the 225 stations, including their IDs, names of their locations, countries (either US or Canada), states located in, latitudes, longitudes and altitudes. 
-2. temp0: containing the daily mean temperatures of the 225 stations from 2017 to 2021.
-3. seasonal_coefs: containing the 4 coefficients of the fitted seasonal functions for each of the 225 stations. 
-4. residuals: containing the daily deseasonalized temperatures of the 225 stations from 2020 to 2021.
-5. sresids: containing the daily standardized residuals of the 225 stations from 2020 to 2021 after fitting vector AR models to the deseasonalized temperatures.
+In addition, five datasets are provided: <br>
+1. tempstations: containing the information of the 225 stations, including their IDs, names of their locations, countries (either US or Canada), states located in, latitudes, longitudes and altitudes. <br>
+2. temp0: containing the daily mean temperatures of the 225 stations from 2017 to 2021. <br>
+3. seasonal_coefs: containing the 4 coefficients of the fitted seasonal functions for each of the 225 stations. <br>
+4. residuals: containing the daily deseasonalized temperatures of the 225 stations from 2020 to 2021. <br>
+5. sresids: containing the daily standardized residuals of the 225 stations from 2020 to 2021 after fitting vector AR models to the deseasonalized temperatures. <br>
 
 ## Examples
 Now, we will demonstrate the detailed usage of each of the functions with relevant examples. 
 
-1. seasonal:
-The inputs is: 
-temp = A n by 1 vector containing the past temperatures data at one station over (n / 365) years
-The outputs are:
-a = a scalar that is the value of the coefficient a in the seasonal function
-b = a scalar that is the value of the coefficient b in the seasonal function
-c = a scalar that is the value of the coefficient c in the seasonal function
-d = a scalar that is the value of the coefficient d in the seasonal function
-seasonality = n by 1 vector containing the values of the seasonal function
-plt = plot of the temperatures and the seasonal function over the time indices
+1. seasonal: <br>
+The inputs is: <br>
+temp = A n by 1 vector containing the past temperatures data at one station over (n / 365) years <br>
+The outputs are: <br>
+a = a scalar that is the value of the coefficient a in the seasonal function <br>
+b = a scalar that is the value of the coefficient b in the seasonal function <br>
+c = a scalar that is the value of the coefficient c in the seasonal function <br>
+d = a scalar that is the value of the coefficient d in the seasonal function <br>
+seasonality = n by 1 vector containing the values of the seasonal function <br>
+plt = plot of the temperatures and the seasonal function over the time indices <br>
 
 For the first illustrative example, we study the temperatures data and seasonality function of Atlanta.
 ```{r}
@@ -80,6 +80,22 @@ head(seasonal1$seasonality) # fitted values of the seasonal function
 # [1]  6.524117e+01 -3.922853e-04 -1.708097e+01  1.755952e+01
 # > head(seasonal1$seasonality) # fitted values of the seasonal function
 # [1] 48.84910 48.76846 48.69269 48.62183 48.55589 48.49490
+```
+
+For the second illustrative example, we study the temperatures data and seasonality function at Red Deer Regional Airport in Alberta.
+```{r}
+# example 2
+temp = as.numeric(temp0[, 50]) # historical temperatures at one station
+seasonal2 = seasonal(temp)
+
+# examine results
+c(seasonal2$a, seasonal2$b, seasonal2$c, seasonal2$d) # coefficients
+head(seasonal2$seasonality) # fitted values of the seasonal function
+
+# > c(seasonal2$a, seasonal2$b, seasonal2$c, seasonal2$d) # coefficients
+# [1]  4.800122e+01  6.943088e-04 -2.324373e+01  1.403588e+01
+# > head(seasonal2$seasonality) # fitted values of the seasonal function
+# [1] 25.34096 25.25598 25.17774 25.10627 25.04157 24.98369
 ```
 
 ## References
