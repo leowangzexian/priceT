@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>", 
+  fig.width = 12, fig.height = 8
 )
 ```
 
@@ -55,8 +56,10 @@ In addition, five datasets are provided: <br>
 Now, we will demonstrate the detailed usage of each of the functions with relevant examples. 
 
 1. seasonal: <br>
+
 The inputs is: <br>
 temp = A n by 1 vector containing the past temperatures data at one station over (n / 365) years <br>
+
 The outputs are: <br>
 a = a scalar that is the value of the coefficient a in the seasonal function <br>
 b = a scalar that is the value of the coefficient b in the seasonal function <br>
@@ -89,6 +92,7 @@ head(seasonal2$seasonality) # fitted values of the seasonal function
 ```
 
 2. Fourier <br>
+
 The inputs are: <br>
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
@@ -96,6 +100,7 @@ start_ind = A numeric index for the start of the measurement period <br>
 end_ind = A numeric index for the end of the measurement period <br>
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+
 The outputs are: <br>
 price = a scalar that is the price of the derivative computed <br>
 sresids = n by p matrix containing the standardized residuals computed <br>
@@ -157,6 +162,7 @@ head(Fourier22$sresids) # standardised residuals
 From the outputs, we can see that the computed price of a January HDD futures based on Grande Prairie Airport in Alberta is $1752.806$ and the computed price of a July CAT futures based on Grande Prairie Airport in Alberta is $1993.411$.  
 
 3. adaptBW <br>
+
 The inputs are: <br>
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
@@ -164,6 +170,7 @@ start_ind = A numeric index for the start of the measurement period <br>
 end_ind = A numeric index for the end of the measurement period <br>
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+
 The outputs are: <br>
 price = a scalar that is the price of the derivative computed <br>
 sresids = n by p matrix containing the standardized residuals computed <br>
@@ -225,6 +232,7 @@ head(adaptBW22$sresids) # standardised residuals
 From the outputs, we can see that the computed price of a January HDD futures based on Grande Prairie Airport in Alberta is $1727.344$ and the computed price of a July CAT futures based on Grande Prairie Airport in Alberta is $1993.516$.  
 
 4. MLSS_spacetime <br>
+
 The inputs are: <br> 
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
@@ -232,6 +240,7 @@ start_ind = A numeric index for the start of the measurement period <br>
 end_ind = A numeric index for the end of the measurement period <br>
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+
 The outputs are: <br>
 price = a scalar that is the price of the derivative computed <br> 
 mu = 1 by p vector containing the parameter mu of the fitted NIG distribution for the standardized residuals <br>
@@ -296,8 +305,9 @@ MLSS_spacetime22$mu # parameter mu of NIG random field
 From the outputs, we can see that the computed price of a January HDD futures based on Grande Prairie Airport in Alberta is $1747.575$ and the computed price of a July CAT futures based on Grande Prairie Airport in Alberta is $1998.542$. 
 
 5. calib <br>
+
 The inputs are: <br>
-market_price = A scalar that is the actual futures prices traded in the market <br>  
+market_price = A scalar that is the actual futures prices traded in the market <br>
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
 start_ind = A numeric index for the start of the measurement period <br> 
@@ -305,6 +315,7 @@ end_ind = A numeric index for the end of the measurement period <br>
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
 func = A function to compute the futures price, either Fourier, adaptBW or MLSS_spacetime <br>
+
 The outputs are: <br>
 theta = a scalar that is the calibrated risk-neutral parameter <br> 
 error = a scalar that is the in-sample pricing error <br>
@@ -371,8 +382,10 @@ calib23$error # in-sample pricing error when using MLSS_sapcetime
 From the results, we can see that the risk-neutral parameter calibrated is $0.370834$ when using the truncated Fourier series method to estimate seasonal volatility with in-sample pricing error of $0$, the risk-neutral parameter calibrated is $0.3763002$ when using the adaptive bandwidth method to estimate seasonal volatility with in-sample pricing error of $0$, and the risk-neutral parameter calibrated is $0.3719441$ when using non-Gaussian spatio-temporal random fields to estimate seasonal volatility with in-sample pricing error of $0$.  
 
 6. diagnostics <br>
+
 The input is: <br>
 resid = A n by 1 vector containing the past deseasonalized temperatures data at one station over (n / 365) years <br>
+
 The outputs are: <br>
 teststat = a scalar that is the test statistic from the Kolmogorov-Smirnov normality test <br>
 pvalue = a scalar that is the p-value from the Kolmogorov-Smirnov normality test <br>
@@ -417,11 +430,13 @@ Based on the tests and plots, we can clearly see that it is not appropriate to c
 The results suggest that multivariate non-Gaussian models should be used to describe the behaviour and evolutions of the deseasonalized temperatures. 
 
 7. temp_forecast <br>
+
 The inputs are: <br>
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station where forecasts are based on <br>
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station considered <br>
 temp = A m by 1 vector containing the past temperatures data at one station over (n / 365) years <br>
+
 The outputs are: <br>
 point = a 1 by 365 vector containing the forecasted temperatures for the next year <br>
 lower = a 1 by 365 vector containing the left endpoints of the confidence intervals for the forecasted temperatures <br>
@@ -475,9 +490,11 @@ The results demonstrate the forecasted temperatures at Grande Prairie Airport in
 These enable us to analyse the temperature forecasts in terms of their point estimates, which reflect accuracy, and confidence intervals, which reflect precision. Continuous-time time series modeling has the ability of providing long-horizon density forecasts. Together with multivariate spatio-temporal models, our forecasts should be as accurate as weather forecasts in terms of point estimates but we are also able to provide accurate longer-horizon forecasts accounting for the distribution of the temperatures and the spatial interactions amongst different locations. 
 
 8. temp_hedge <br>
+
 The inputs are: <br>
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station to be considered <br>
+
 The output is: <br>
 vol = A 1 by 334 vector containing the volatilities of CAT futures prices on each day in the next year <br>
 
@@ -514,9 +531,11 @@ The outputs are the volatilities of the CAT futures prices based on Grande Prair
 The volatility of CAT futures prices is equivalent to the hedge ratio, which is the number of CAT futures contracts needed in order to create a perfect hedge for the temperature risk at that particular location to avoid any losses due to atypical weather conditions. Based on our analytical pricing formulae, we were able to derive the stochastic differential equations (SDEs) of the futures prices, giving rise to the hedge ratios, which are dynamic and time-varying. The behaviour of the hedge ratios demonstrate the Samuelson effect, that is, the volatility of futures prices decreases as we approach the start of the measurement period. 
 
 9. loc_hedge <br>
+
 The inputs are: <br>
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station to be considered <br>
+
 The output is: <br>
 optim_weights = A 1 by (p - 1) vector containing the optimal weights for each station in the portfolio <br>
 
@@ -558,6 +577,7 @@ sum(loc_hedge2$optim_weights) # sum to one
 The results indicate the weights that need to be assigned to the temperature  futures based on Comox Airport in British Columbia, Langara in British Columbia, Fort St. John Airport in British Columbia and Terrace Airport in British Columbia in order to form a portfolio to hedge the temperature risk at Grande Prairie Airport in Alberta. A positive weight indicates long position whereas a negative weight indicates short position. 
 
 11. Fourier_c <br>
+
 The inputs are: <br>
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
 station = A numeric index denoting the specific station that the price of the temperature futures depends on <br>
@@ -565,6 +585,7 @@ start_ind = A numeric index for the start of the measurement period <br>
 end_ind = A numeric index for the end of the measurement period <br>
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
+
 The outputs are: <br>
 price = a scalar that is the price of the derivative computed <br>
 sresids = n by p matrix containing the standardized residuals computed <br>
@@ -597,6 +618,7 @@ head(Fourier12$sresids) # standardised residuals
 ```
 
 12. calib_c <br>
+
 The inputs are: <br>
 market_price = A scalar that is the actual futures prices traded in the market <br>  
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3) <br>
@@ -606,6 +628,7 @@ end_ind = A numeric index for the end of the measurement period <br>
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT <br>
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced <br>
 func = A function to compute the futures price, either Fourier, adaptBW or MLSS_spacetime <br>
+
 The outputs are: <br>
 theta = a scalar that is the calibrated risk-neutral parameter <br> 
 error = a scalar that is the in-sample pricing error <br>
