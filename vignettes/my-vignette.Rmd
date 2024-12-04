@@ -1,13 +1,32 @@
-**Package priceT**
+---
+title: "priceT"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{priceT}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
 
-**Introduction:**
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
 Temperature derivatives are financial contracts whose payoffs depend on the temperatures at specific stations over certain periods of time. Currently, there are three main types of temperature derivatives, comprising Cooling Degree Days (CDD), Heating Degree Days (HDD) and Cumulative Average Temperature (CAT) futures contracts, traded at the Chicago Mercantile Exchange (CME) and a total of $13$ measuring stations in the United States. The three temperature indices are defined as follow: 
 $$\text{CDD}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}\max(T_i-c,0)$$, $$\text{HDD}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}\max(c-T_i,0)$$, and $$\text{CAT}(\tau_1,\tau_2)=\sum_{i=\tau_1}^{\tau_2}T_i,$$
 where $T_i$ denotes the mean of the maximum and minimum temperatures on day $i$, and $\tau_1$ and $\tau_2$ denote the start and end dates of the measurement period respectively. The CDD over the measurement period is the accumulated temperatures above the threshold $c$, which is usually taken as $c=65^{\circ}\text{F}$, serving as an indicator of the need for cooling, whereas the HDD indicates the need for heating. For the stations in the US, CME mainly organizes trades for monthly temperature futures. CDD contracts are only traded for the summer season from April to October whereas HDD contracts are only traded for the winter season from October to April. Existing approaches on the pricing of temperature derivatives focus on the use of continuous-time ARMA (CARMA) processes and Brownian-driven Ornstein-Uhlenbeck (OU) dynamics with univariate seasonal volatility for modeling the deseasonalized temperatures at a particular site. In contrast with existing methods that focus on estimating univariate seasonal volatility and isolating Gaussian risk factors, we develop efficient pricing methods with analytical pricing formulae based on multivariate seasonal volatility, which can be modeled and estimated by three methods, truncated Fourier series, adaptive bandwidth selection and non-Gaussian spatio-temporal random fields describing the evolutions of the temperatures at different stations over time. 
 The package focuses on the calibration and computation of the futures prices as well as other relevant techniques such as temperature modeling and forecasting, and the design of hedging strategies for managing temperature risk.
 
-**Functionality:**
-The main purpose of the package is to compute the price of a temperature futures using different methods based on the station (location), measurement period (time), which will be a particular month, and the type of contract (CDD, HDD or CAT) inputted. In the package priceT, the following functions are implemented: 
+To begin exploring the package, install and load {packageT} in R:
+```{r}
+library(priceT)
+```
+
+## Functionality
+Let us first go through an overview of the basic purposes of each of the functions provided in the package. The main purpose of the package is to compute the price of a temperature futures using different methods based on the station (location), measurement period (time), which will be a particular month, and the type of contract (CDD, HDD or CAT) inputted. In the package priceT, the following functions are implemented: 
 1. seasonal: returns the estimated coefficients of the seasonality function. 
 2. Fourier: returns the price of a temperature futures using the truncated Fourier series method. 
 3. adaptBW: returns the price of a temperature futures using the adaptive bandwidth method. 
@@ -28,9 +47,18 @@ In addition, five datasets are provided:
 4. residuals: containing the daily deseasonalized temperatures of the 225 stations from 2020 to 2021.
 5. sresids: containing the daily standardized residuals of the 225 stations from 2020 to 2021 after fitting vector AR models to the deseasonalized temperatures.
 
-**Installation instructions:**
-The package priceT can be installed from GitHub directly. To install the package, run `devtools::install_github("leowangzexian/priceT")` in R. 
-To install the package with the vignette, run `devtools::install_github("leowangzexian/priceT", build_vignette = TRUE)` in R.
+## Examples
+Now, we will demonstrate the detailed usage of each of the functions with relevant examples. 
 
-**Examples:**
 
+## References
+
+Barndorff-Nielsen, O. E. and Shephard, N. (2001), “Non-Gaussian Ornstein-Uhlenbeck-based models and some of their uses in financial economics,” Journal of the Royal Statistical Society: Series B (Statistical Methodology), 63(2), 167-241.
+
+Benth, F. E., Saltyte Benth, J., and Koekebakker, S. (2007), “Putting a price on temperature,” Scandinavian Journal of Statistics, 34(4), 746-67.
+
+Bolin, D. and Wallin, J. (2020), “Multivariate type G Matern stochastic partial differential equation random fields,” Journal of the Royal Statistical Society: Series B (Statistical Methodology), 82(1), 215-39.
+
+Campbell, S. D. and Diebold, F. X. (2005), “Weather forecasting for weather derivatives,” Journal of the American Statistical Association, 100(469), 6-16.
+
+Hardle, W. K., Lopez-Cabrera, B., Okhrin, O., and Wang, W. (2016), “Localizing temperature risk,” Journal of the American Statistical Association, 111(516), 1491-508.
