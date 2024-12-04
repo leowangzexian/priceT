@@ -2,7 +2,7 @@ Package: priceT
 Title: COMPUTING THE PRICES OF TEMPERATURE DERIVATIVES
 Version: 0.0.0.9000
 Authors@R: 
-    person("Zexian", "Wang", "leowang@tamu.edu", role = c("aut", "cre"))
+    person("Zexian", "Wang", , "leowang@tamu.edu", role = c("aut", "cre"))
 Description: This package contains functions for computing the prices of 
   different types of temperature derivatives based on their measurement periods 
   and underlying locations, and for calibrating the risk-neutral parameters 
