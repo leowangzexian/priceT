@@ -38,8 +38,10 @@ To install the package with the vignette, run `devtools::install_github("leowang
 We demonstrate the detailed usage of some functions with relevant examples. 
 
 1. seasonal  
+
 The input is:  
 temp = A n by 1 vector containing the past temperatures data at one station over (n / 365) years  
+
 The outputs are:  
 a = a scalar that is the value of the coefficient a in the seasonal function  
 b = a scalar that is the value of the coefficient b in the seasonal function  
@@ -66,6 +68,7 @@ head(seasonal1$seasonality) # fitted values of the seasonal function
 ```
 
 2. Fourier  
+
 The inputs are:  
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)  
 station = A numeric index denoting the specific station that the price of the temperature futures depends on  
@@ -73,6 +76,7 @@ start_ind = A numeric index for the start of the measurement period
 end_ind = A numeric index for the end of the measurement period  
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT  
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced  
+
 The outputs are:  
 price = a scalar that is the price of the derivative computed  
 sresids = n by p matrix containing the standardized residuals computed  
@@ -129,6 +133,7 @@ From the outputs, we can see that the computed price of a January HDD futures ba
 
 
 4. MLSS_spacetime  
+
 The inputs are:  
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)  
 station = A numeric index denoting the specific station that the price of the temperature futures depends on  
@@ -136,6 +141,7 @@ start_ind = A numeric index for the start of the measurement period
 end_ind = A numeric index for the end of the measurement period  
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT  
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced  
+
 The outputs are:  
 price = a scalar that is the price of the derivative computed  
 mu = 1 by p vector containing the parameter mu of the fitted NIG distribution for the standardized residuals  
@@ -181,6 +187,7 @@ From the outputs, we can see that the computed price of a January HDD futures ba
 
 
 5. calib  
+
 The inputs are:  
 market_price = A scalar that is the actual futures prices traded in the market  
 residuals = A n by p matrix containing the past deseasonalized temperatures data at p stations over (n / 365) years (n >= 365 * 2) (p >= 3)  
@@ -190,6 +197,7 @@ end_ind = A numeric index for the end of the measurement period
 type = A string denoting the type of the temperature futures, either CDD, HDD or CAT  
 seasonal_coefs = A 1 by 4 vector containing the coefficients of the seasonality function at the station to be priced  
 func = A function to compute the futures price, either Fourier, adaptBW or MLSS_spacetime  
+
 The outputs are:  
 theta = a scalar that is the calibrated risk-neutral parameter   
 error = a scalar that is the in-sample pricing error  
