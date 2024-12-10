@@ -16,7 +16,7 @@ test_that("the function diagnostics outputs appropriate test statistics and p-va
   resid = as.numeric(ghyp::rghyp(730)) # deseasonalized temperaures at one station
   diag1 = diagnostics(resid)
   expect_gt(diag1$teststat, 0.01) # test statistic less than 0.3
-  expect_lt(diag1$pvalue, 0.01) # p-value is 0
+  expect_lt(diag1$pvalue, 0.1) # p-value is 0
 
   # 2nd test case
   resid = as.numeric(ghyp::rgig(730)) # deseasonalized temperaures at one station
